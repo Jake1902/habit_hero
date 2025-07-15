@@ -13,12 +13,13 @@ class TemplateGalleryScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final templateService = GetIt.I<TemplateService>();
+    final scheme = Theme.of(context).colorScheme;
     return Scaffold(
-      backgroundColor: const Color(0xFF121212),
+      backgroundColor: scheme.background,
       appBar: AppBar(
         title: const Text('Templates'),
         backgroundColor: Colors.transparent,
-        iconTheme: const IconThemeData(color: Colors.white),
+        iconTheme: IconThemeData(color: scheme.onBackground),
       ),
       body: FutureBuilder<List<HabitTemplate>>(
         future: templateService.loadTemplates(),
@@ -42,7 +43,7 @@ class TemplateGalleryScreen extends StatelessWidget {
                 onTap: () => Navigator.pop(ctx, tpl),
                 child: Container(
                   decoration: BoxDecoration(
-                    color: const Color(0xFF1E1E1E),
+                    color: scheme.surfaceVariant,
                     borderRadius: BorderRadius.circular(AppRadii.r12),
                   ),
                   padding: const EdgeInsets.all(AppSpacing.s12),
@@ -54,7 +55,7 @@ class TemplateGalleryScreen extends StatelessWidget {
                         backgroundColor: Color(tpl.color),
                         child: Icon(
                           IconData(tpl.iconData, fontFamily: 'MaterialIcons'),
-                          color: Colors.white,
+                          color: scheme.onPrimary,
                         ),
                       ),
                       const SizedBox(height: AppSpacing.s12),
@@ -62,7 +63,7 @@ class TemplateGalleryScreen extends StatelessWidget {
                         tpl.name,
                         style: AppTextStyles.headline.copyWith(
                           fontSize: 16,
-                          color: Colors.white,
+                          color: scheme.onBackground,
                         ),
                       ),
                       const SizedBox(height: AppSpacing.s8),

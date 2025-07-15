@@ -274,12 +274,14 @@ class _AddEditHabitScreenState extends State<AddEditHabitScreen> {
                   width: 80,
                   height: 80,
                   decoration: BoxDecoration(
-                    color: const Color(0xFF1A1A1A),
+                    color: Theme.of(context).colorScheme.surfaceVariant,
                     borderRadius: BorderRadius.circular(20),
                   ),
                   // Icon preview uses a neutral background. The selected color
                   // only affects progress tiles, not the icon itself.
-                  child: Icon(_icon, color: Colors.white, size: 40),
+                  child: Icon(_icon,
+                      color: Theme.of(context).colorScheme.onPrimary,
+                      size: 40),
                 ),
               ),
               const SizedBox(height: 12),
@@ -287,8 +289,9 @@ class _AddEditHabitScreenState extends State<AddEditHabitScreen> {
               const SizedBox(height: 4),
               TextField(
                 controller: _nameController,
-                style: const TextStyle(
-                    color: Colors.white, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                    color: Theme.of(context).colorScheme.onBackground,
+                    fontWeight: FontWeight.bold),
                 decoration: const InputDecoration(
                   hintText: 'Name',
                 ),
@@ -299,7 +302,8 @@ class _AddEditHabitScreenState extends State<AddEditHabitScreen> {
               const SizedBox(height: 4),
               TextField(
                 controller: _descriptionController,
-                style: const TextStyle(color: Colors.white70),
+                style: TextStyle(
+                    color: Theme.of(context).colorScheme.onBackground.withOpacity(0.7)),
                 decoration: const InputDecoration(hintText: 'Description'),
               ),
               const SizedBox(height: 12),
@@ -318,7 +322,7 @@ class _AddEditHabitScreenState extends State<AddEditHabitScreen> {
                           borderRadius: BorderRadius.circular(8),
                           border: Border.all(
                             color: _color == color.value
-                                ? const Color(0xFF8A2BE2)
+                                ? Theme.of(context).colorScheme.primary
                                 : Colors.transparent,
                             width: 3,
                           ),
@@ -342,7 +346,7 @@ class _AddEditHabitScreenState extends State<AddEditHabitScreen> {
                       _advancedExpanded
                           ? Icons.keyboard_arrow_up
                           : Icons.keyboard_arrow_down,
-                      color: Colors.white,
+                      color: Theme.of(context).colorScheme.onBackground,
                     ),
                   ],
                 ),
@@ -365,9 +369,13 @@ class _AddEditHabitScreenState extends State<AddEditHabitScreen> {
             width: double.infinity,
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor:
-                    isValid ? const Color(0xFF8A2BE2) : Colors.white24,
-                foregroundColor: Colors.white,
+                backgroundColor: isValid
+                    ? Theme.of(context).colorScheme.primary
+                    : Theme.of(context)
+                        .colorScheme
+                        .onBackground
+                        .withOpacity(0.24),
+                foregroundColor: Theme.of(context).colorScheme.onPrimary,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
                 ),
@@ -389,7 +397,8 @@ class _AddEditHabitScreenState extends State<AddEditHabitScreen> {
           title: const Text('Icon'),
           // Icon color remains white; habit color only influences progress
           // tiles on the home screen.
-          trailing: Icon(_icon, color: Colors.white),
+          trailing:
+              Icon(_icon, color: Theme.of(context).colorScheme.onBackground),
           onTap: _pickIcon,
         ),
         ListTile(
@@ -399,10 +408,12 @@ class _AddEditHabitScreenState extends State<AddEditHabitScreen> {
           onTap: _editStreakGoal,
         ),
         ListTile(
-          leading: const Icon(Icons.notifications_active, color: Colors.white),
+          leading:
+              Icon(Icons.notifications_active, color: Theme.of(context).colorScheme.onBackground),
           title: Text(_reminderSummaryText,
-              style: const TextStyle(color: Colors.white)),
-          trailing: const Icon(Icons.chevron_right, color: Colors.white),
+              style: TextStyle(color: Theme.of(context).colorScheme.onBackground)),
+          trailing:
+              Icon(Icons.chevron_right, color: Theme.of(context).colorScheme.onBackground),
           onTap: () async {
             final result = await context.push<Map<String, dynamic>>(
               '/reminder_setup',
@@ -574,16 +585,17 @@ class _IconPickerState extends State<_IconPicker> {
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 200),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF1A1A1A),
+                      color: Theme.of(context).colorScheme.surfaceVariant,
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
                         color: selected
-                            ? const Color(0xFF8A2BE2)
+                            ? Theme.of(context).colorScheme.primary
                             : Colors.transparent,
                         width: 2,
                       ),
                     ),
-                    child: Icon(icon, color: Colors.white),
+                    child: Icon(icon,
+                        color: Theme.of(context).colorScheme.onPrimary),
                   ),
                 );
               },
@@ -686,7 +698,7 @@ class _ColorPickerState extends State<_ColorPicker> {
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(
                         color: selected
-                            ? const Color(0xFF8A2BE2)
+                            ? Theme.of(context).colorScheme.primary
                             : Colors.transparent,
                         width: 3,
                       ),

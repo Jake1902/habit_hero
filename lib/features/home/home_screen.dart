@@ -92,8 +92,8 @@ class _HomeScreenState extends State<HomeScreen> {
       backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
       builder: (context) => SafeArea(
         child: ListTile(
-          leading: const Icon(Icons.archive, color: Colors.white),
-          title: const Text('Archive', style: TextStyle(color: Colors.white)),
+          leading: Icon(Icons.archive, color: scheme.onBackground),
+          title: Text('Archive', style: TextStyle(color: scheme.onBackground)),
           onTap: () {
             Navigator.pop(context);
             _archiveHabit(habit);
@@ -153,7 +153,7 @@ class _HomeScreenState extends State<HomeScreen> {
         backgroundColor: scheme.background,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.settings, color: Colors.white),
+          icon: Icon(Icons.settings, color: scheme.onBackground),
           onPressed: () => context.push('/settings'),
         ),
         title: RichText(
@@ -164,9 +164,9 @@ class _HomeScreenState extends State<HomeScreen> {
               fontFamily: 'Roboto',
             ),
             children: [
-              const TextSpan(
+              TextSpan(
                 text: 'Habit',
-                style: TextStyle(color: Colors.white),
+                style: TextStyle(color: scheme.onBackground),
               ),
               TextSpan(
                 text: 'Hero',
@@ -177,11 +177,11 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.bar_chart, color: Colors.white),
+            icon: Icon(Icons.bar_chart, color: scheme.onBackground),
             onPressed: () => context.push('/analytics'),
           ),
           IconButton(
-            icon: const Icon(Icons.add_circle_outline, color: Colors.white),
+            icon: Icon(Icons.add_circle_outline, color: scheme.onBackground),
             onPressed: _goToAddHabit,
           ),
         ],
@@ -202,11 +202,11 @@ class _HomeScreenState extends State<HomeScreen> {
                       height: 80,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: Colors.white.withOpacity(0.1),
+                        color: scheme.onBackground.withOpacity(0.1),
                       ),
-                      child: const Icon(
+                      child: Icon(
                         Icons.add,
-                        color: Colors.white,
+                        color: scheme.onBackground,
                         size: 40,
                       ),
                     ),
@@ -214,7 +214,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     Text(
                       'No habit found',
                       style: AppTextStyles.headline.copyWith(
-                        color: Colors.white,
+                        color: scheme.onBackground,
                       ),
                     ),
                     const SizedBox(height: AppSpacing.s8),

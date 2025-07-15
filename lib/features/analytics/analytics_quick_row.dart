@@ -9,7 +9,7 @@ class AnalyticsQuickRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const purple = Color(0xFF8A2BE2);
+    final scheme = Theme.of(context).colorScheme;
     final service = context.watch<AnalyticsService>();
     final overall = service.overall;
     final todayCount =
@@ -26,11 +26,11 @@ class AnalyticsQuickRow extends StatelessWidget {
   }
 
   Widget _chip(String label, String value) {
-    const purple = Color(0xFF8A2BE2);
+    final scheme = Theme.of(context).colorScheme;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: const Color(0xFF1E1E1E),
+        color: scheme.surfaceVariant,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
@@ -38,13 +38,14 @@ class AnalyticsQuickRow extends StatelessWidget {
         children: [
           Text(
             label,
-            style: const TextStyle(color: Colors.white70, fontSize: 12),
+            style:
+                TextStyle(color: scheme.onBackground.withOpacity(0.7), fontSize: 12),
           ),
           const SizedBox(height: 4),
           Text(
             value,
-            style: const TextStyle(
-              color: purple,
+            style: TextStyle(
+              color: scheme.primary,
               fontWeight: FontWeight.bold,
             ),
           ),

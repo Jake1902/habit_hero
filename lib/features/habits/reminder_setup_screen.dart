@@ -57,7 +57,7 @@ class _ReminderSetupScreenState extends State<ReminderSetupScreen> {
 
   @override
   Widget build(BuildContext context) {
-    const purple = Color(0xFF8A2BE2);
+    final scheme = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -67,7 +67,7 @@ class _ReminderSetupScreenState extends State<ReminderSetupScreen> {
           onPressed: () => Navigator.pop(context),
         ),
       ),
-      backgroundColor: const Color(0xFF121212),
+      backgroundColor: scheme.background,
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -83,7 +83,7 @@ class _ReminderSetupScreenState extends State<ReminderSetupScreen> {
                 return ChoiceChip(
                   label: Text(label),
                   selected: selected,
-                  selectedColor: purple,
+                  selectedColor: scheme.primary,
                   onSelected: (_) => _toggleDay(day),
                 );
               }),
@@ -93,8 +93,8 @@ class _ReminderSetupScreenState extends State<ReminderSetupScreen> {
               ElevatedButton(
                 onPressed: _pickTime,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: purple,
-                  foregroundColor: Colors.white,
+                  backgroundColor: scheme.primary,
+                  foregroundColor: scheme.onPrimary,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),
@@ -104,7 +104,7 @@ class _ReminderSetupScreenState extends State<ReminderSetupScreen> {
             const SizedBox(height: 16),
             Text(
               _previewText,
-              style: const TextStyle(color: Colors.white),
+              style: TextStyle(color: scheme.onBackground),
             ),
             const Spacer(),
             SizedBox(
@@ -112,8 +112,8 @@ class _ReminderSetupScreenState extends State<ReminderSetupScreen> {
               child: ElevatedButton(
                 onPressed: _save,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: purple,
-                  foregroundColor: Colors.white,
+                  backgroundColor: scheme.primary,
+                  foregroundColor: scheme.onPrimary,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
                   ),

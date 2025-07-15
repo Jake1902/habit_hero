@@ -68,9 +68,12 @@ class _CategoryCreationScreenState extends State<CategoryCreationScreen> {
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: isValid
-                      ? const Color(0xFF8A2BE2)
-                      : Colors.white24,
-                  foregroundColor: Colors.white,
+                      ? Theme.of(context).colorScheme.primary
+                      : Theme.of(context)
+                          .colorScheme
+                          .onBackground
+                          .withOpacity(0.24),
+                  foregroundColor: Theme.of(context).colorScheme.onPrimary,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
                   ),
@@ -159,16 +162,17 @@ class _IconPickerState extends State<_IconPicker> {
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 200),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF1A1A1A),
+                      color: Theme.of(context).colorScheme.surfaceVariant,
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
                         color: selected
-                            ? const Color(0xFF8A2BE2)
+                            ? Theme.of(context).colorScheme.primary
                             : Colors.transparent,
                         width: 2,
                       ),
                     ),
-                    child: Icon(icon, color: Colors.white),
+                    child:
+                        Icon(icon, color: Theme.of(context).colorScheme.onPrimary),
                   ),
                 );
               },

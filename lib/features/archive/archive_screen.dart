@@ -50,21 +50,22 @@ class _ArchiveScreenState extends State<ArchiveScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     return Scaffold(
-      backgroundColor: const Color(0xFF121212),
+      backgroundColor: scheme.background,
       appBar: AppBar(
         title: const Text('Archive'),
-        backgroundColor: const Color(0xFF121212),
+        backgroundColor: scheme.background,
       ),
       body: FutureBuilder<List<Habit>>(
         future: _archivedFuture,
         builder: (context, snapshot) {
           final habits = snapshot.data ?? [];
           if (habits.isEmpty) {
-            return const Center(
+            return Center(
               child: Text(
                 'No archived habits',
-                style: TextStyle(color: Colors.white70),
+                style: TextStyle(color: scheme.onBackground.withOpacity(0.7)),
               ),
             );
           }
@@ -77,14 +78,15 @@ class _ArchiveScreenState extends State<ArchiveScreen> {
                 final icon =
                     IconData(habit.iconData, fontFamily: 'MaterialIcons');
                 return ListTile(
-                  leading: Icon(icon, color: Colors.white),
+                  leading: Icon(icon, color: scheme.onBackground),
                   title: Text(habit.name,
-                      style: const TextStyle(color: Colors.white)),
+                      style: TextStyle(color: scheme.onBackground)),
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       IconButton(
-                        icon: const Icon(Icons.restore, color: Colors.white),
+                        icon:
+                            Icon(Icons.restore, color: scheme.onBackground),
                         onPressed: () => _restore(habit),
                       ),
                       IconButton(

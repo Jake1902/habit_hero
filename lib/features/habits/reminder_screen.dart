@@ -73,8 +73,8 @@ class _ReminderScreenState extends State<ReminderScreen> {
               label: Text(_weekdayName(day)),
               selected: selected,
               onSelected: (_) => _toggle(day),
-              selectedColor: const Color(0xFF8A2BE2),
-              checkmarkColor: Colors.white,
+              selectedColor: Theme.of(context).colorScheme.primary,
+              checkmarkColor: Theme.of(context).colorScheme.onPrimary,
             );
           }),
         ),
@@ -85,8 +85,8 @@ class _ReminderScreenState extends State<ReminderScreen> {
           width: double.infinity,
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF8A2BE2),
-              foregroundColor: Colors.white,
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              foregroundColor: Theme.of(context).colorScheme.onPrimary,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
               ),
