@@ -82,14 +82,13 @@ GoRouter createRouter(bool onboardingComplete, GlobalKey<NavigatorState> key) {
         builder: (_, __) => const SettingsScreen(),
       ),
       GoRoute(
-
         path: '/backup_restore',
         name: 'backup_restore',
         builder: (_, __) => const ExportImportScreen(),
-
+      ),
+      GoRoute(
         path: '/theme',
         builder: (_, __) => const ThemeScreen(),
-
       ),
     ],
   );
