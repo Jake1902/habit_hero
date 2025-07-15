@@ -127,7 +127,7 @@ class _HomeScreenState extends State<HomeScreen> {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.settings, color: Colors.white),
-          onPressed: () => context.go('/settings'),
+          onPressed: () => context.push('/settings'),
         ),
         title: RichText(
           text: const TextSpan(
@@ -228,7 +228,17 @@ class _HomeScreenState extends State<HomeScreen> {
                   currentStreak: current,
                   longestStreak: longest,
                   onEdit: () => _editHabit(habit),
+
                   onLongPress: () => _showHabitOptions(habit),
+
+                  onDayTapped: (day) {
+                    context.push('/calendar_edit', extra: {
+                      'habitId': habit.id,
+                      'habitName': habit.name,
+                      'completionMap': data,
+                    });
+                  },
+
                 );
               },
             ),

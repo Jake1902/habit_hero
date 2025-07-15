@@ -8,6 +8,7 @@ import 'category_creation_screen.dart';
 import 'streak_goal_screen.dart';
 import 'package:get_it/get_it.dart';
 import '../../core/services/notification_service.dart';
+import '../../core/services/notification_permission_service.dart';
 
 /// Screen for creating or editing a habit.
 class AddEditHabitScreen extends StatefulWidget {
@@ -33,7 +34,7 @@ class _AddEditHabitScreenState extends State<AddEditHabitScreen> {
 
   StreakGoal _streakGoal = StreakGoal.none;
   TimeOfDay? _reminderTime;
-  List<int> _selectedWeekdays = [];
+  List<int> _reminderWeekdays = [];
   List<String> _categories = [];
   CompletionTrackingType _trackingType = CompletionTrackingType.stepByStep;
   int _completionTarget = 1;
@@ -99,7 +100,7 @@ class _AddEditHabitScreenState extends State<AddEditHabitScreen> {
       _color = habit.color;
       _streakGoal = habit.streakGoal;
       _reminderTime = habit.reminderTime;
-      _selectedWeekdays = List.of(habit.reminderWeekdays);
+      _reminderWeekdays = List.of(habit.reminderWeekdays);
       _categories = List.of(habit.categories);
       _trackingType = habit.completionTrackingType;
       _completionTarget = habit.completionTarget;
@@ -170,6 +171,15 @@ class _AddEditHabitScreenState extends State<AddEditHabitScreen> {
     });
   }
 
+  String get _reminderSummaryText {
+    if (_reminderTime == null || _reminderWeekdays.isEmpty) return 'None';
+    final time = _reminderTime!.format(context);
+    final labels = _reminderWeekdays
+        .map((d) => ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][d - 1])
+        .join(', ');
+    return '$time on $labels';
+  }
+
   /// Saves the habit and pops the screen.
   Future<void> _save() async {
     final name = _nameController.text.trim();
@@ -183,7 +193,7 @@ class _AddEditHabitScreenState extends State<AddEditHabitScreen> {
       streakGoal: _streakGoal,
       reminderDays: [],
       reminderTime: _reminderTime,
-      reminderWeekdays: _selectedWeekdays,
+      reminderWeekdays: _reminderWeekdays,
       categories: _categories,
       completionTrackingType: _trackingType,
       completionTarget: _completionTarget,
@@ -195,6 +205,8 @@ class _AddEditHabitScreenState extends State<AddEditHabitScreen> {
     }
     final notificationService = GetIt.I<NotificationService>();
     if (habit.reminderTime != null && habit.reminderWeekdays.isNotEmpty) {
+      await GetIt.I<NotificationPermissionService>()
+          .ensurePermissionRequested(context);
       await notificationService.scheduleHabitReminder(
         habitId: habit.id,
         title: habit.name,
@@ -360,28 +372,26 @@ class _AddEditHabitScreenState extends State<AddEditHabitScreen> {
           onTap: _editStreakGoal,
         ),
         ListTile(
-          title: const Text('Reminder Time'),
-          subtitle: Text(_reminderTime?.format(context) ?? 'None'),
-          onTap: _pickReminderTime,
-        ),
-        Wrap(
-          spacing: 8,
-          children: List.generate(7, (i) {
-            final day = i + 1;
-            final label = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][i];
-            final selected = _selectedWeekdays.contains(day);
-            return ChoiceChip(
-              label: Text(label),
-              selected: selected,
-              onSelected: (on) {
-                setState(() {
-                  on
-                      ? _selectedWeekdays.add(day)
-                      : _selectedWeekdays.remove(day);
-                });
+          leading: const Icon(Icons.notifications_active, color: Colors.white),
+          title: Text(_reminderSummaryText,
+              style: const TextStyle(color: Colors.white)),
+          trailing: const Icon(Icons.chevron_right, color: Colors.white),
+          onTap: () async {
+            final result = await context.push<Map<String, dynamic>>(
+              '/reminder_setup',
+              extra: {
+                'initialTime': _reminderTime,
+                'initialWeekdays': _reminderWeekdays,
               },
             );
-          }),
+            if (result != null) {
+              setState(() {
+                _reminderTime = result['time'] as TimeOfDay?;
+                _reminderWeekdays =
+                    List<int>.from(result['weekdays'] as List<dynamic>);
+              });
+            }
+          },
         ),
         Wrap(
           spacing: 8,

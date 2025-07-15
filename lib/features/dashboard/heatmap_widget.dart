@@ -23,12 +23,16 @@ class HabitHeatmap extends StatelessWidget {
   /// Whether to show the icon and name above the heatmap.
   final bool showHeader;
 
+  /// Callback when a day square is tapped.
+  final void Function(DateTime tappedDay)? onDayTapped;
+
   const HabitHeatmap({
     super.key,
     required this.completionData,
     required this.icon,
     required this.name,
     required this.tileColor,
+    required this.onDayTapped,
     this.days = 90,
     this.showHeader = true,
   });
@@ -71,6 +75,7 @@ class HabitHeatmap extends StatelessWidget {
                   duration: const Duration(seconds: 1),
                 ),
               );
+            onDayTapped?.call(key);
           },
           child: Tooltip(
             message: message,
