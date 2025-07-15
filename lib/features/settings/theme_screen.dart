@@ -1,8 +1,20 @@
 import 'package:flutter/material.dart';
 
 /// Simple theme selection screen placeholder.
-class ThemeScreen extends StatelessWidget {
+class ThemeScreen extends StatefulWidget {
   const ThemeScreen({super.key});
+
+  @override
+  State<ThemeScreen> createState() => _ThemeScreenState();
+}
+
+class _ThemeScreenState extends State<ThemeScreen> {
+  ThemeMode _mode = ThemeMode.system;
+
+  void _setMode(ThemeMode? mode) {
+    if (mode == null) return;
+    setState(() => _mode = mode);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -17,12 +29,30 @@ class ThemeScreen extends StatelessWidget {
         backgroundColor: const Color(0xFF121212),
         elevation: 0,
       ),
-      body: const Center(
-        child: Text(
-          'Theme options will be available soon',
-          style: TextStyle(color: Colors.white),
-          textAlign: TextAlign.center,
-        ),
+      body: Column(
+        children: [
+          RadioListTile<ThemeMode>(
+            value: ThemeMode.system,
+            groupValue: _mode,
+            onChanged: _setMode,
+            activeColor: Colors.white,
+            title: const Text('System', style: TextStyle(color: Colors.white)),
+          ),
+          RadioListTile<ThemeMode>(
+            value: ThemeMode.light,
+            groupValue: _mode,
+            onChanged: _setMode,
+            activeColor: Colors.white,
+            title: const Text('Light', style: TextStyle(color: Colors.white)),
+          ),
+          RadioListTile<ThemeMode>(
+            value: ThemeMode.dark,
+            groupValue: _mode,
+            onChanged: _setMode,
+            activeColor: Colors.white,
+            title: const Text('Dark', style: TextStyle(color: Colors.white)),
+          ),
+        ],
       ),
     );
   }
