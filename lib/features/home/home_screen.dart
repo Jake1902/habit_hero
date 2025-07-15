@@ -178,7 +178,7 @@ class _HomeScreenState extends State<HomeScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.bar_chart, color: Colors.white),
-            onPressed: () => context.go('/analytics'),
+            onPressed: () => context.push('/analytics'),
           ),
           IconButton(
             icon: const Icon(Icons.add_circle_outline, color: Colors.white),
