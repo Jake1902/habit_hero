@@ -136,6 +136,7 @@ class HabitItemWidget extends StatelessWidget {
           const Divider(color: Colors.white24),
         ],
       ),
+      )
     );
   }
 }
