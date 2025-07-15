@@ -12,12 +12,10 @@ import 'package:habit_hero_project/app.dart';
 
 void main() {
   testWidgets('App builds', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      App(
-        onboardingComplete: false,
-        navigatorKey: GlobalKey<NavigatorState>(),
-      ),
-    );
+
+    final key = GlobalKey<NavigatorState>();
+    await tester.pumpWidget(App(onboardingComplete: false, navigatorKey: key));
+
     expect(find.byType(MaterialApp), findsOneWidget);
   });
 }

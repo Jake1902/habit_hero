@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:get_it/get_it.dart';
 import '../../core/constants/spacing.dart';
 import '../../core/constants/radii.dart';
 import '../../core/constants/text_styles.dart';
@@ -12,7 +12,7 @@ class TemplateGalleryScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final templateService = context.read<TemplateService>();
+    final templateService = GetIt.I<TemplateService>();
     return Scaffold(
       backgroundColor: const Color(0xFF121212),
       appBar: AppBar(
@@ -58,9 +58,13 @@ class TemplateGalleryScreen extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: AppSpacing.s12),
-                      Text(tpl.name,
-                          style: AppTextStyles.headline
-                              .copyWith(fontSize: 16, color: Colors.white)),
+                      Text(
+                        tpl.name,
+                        style: AppTextStyles.headline.copyWith(
+                          fontSize: 16,
+                          color: Colors.white,
+                        ),
+                      ),
                       const SizedBox(height: AppSpacing.s8),
                       Expanded(
                         child: Text(
