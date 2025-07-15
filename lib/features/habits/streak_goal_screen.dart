@@ -26,8 +26,17 @@ class _StreakGoalScreenState extends State<StreakGoalScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Streak Goal')),
-      body: Column(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.close, size: 24),
+          onPressed: () => Navigator.pop(context),
+        ),
+        centerTitle: true,
+        title: const Text('Streak Goal',
+            style: TextStyle(fontWeight: FontWeight.bold)),
+        backgroundColor: Colors.transparent,
+      ),
+      body: ListView(
         children: StreakGoal.values
             .map(
               (e) => RadioListTile<StreakGoal>(
@@ -39,9 +48,22 @@ class _StreakGoalScreenState extends State<StreakGoalScreen> {
             )
             .toList(),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _save,
-        child: const Icon(Icons.check),
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.all(16),
+        child: SizedBox(
+          width: double.infinity,
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF8A2BE2),
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+            ),
+            onPressed: _save,
+            child: const Text('Save'),
+          ),
+        ),
       ),
     );
   }

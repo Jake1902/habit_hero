@@ -44,11 +44,31 @@ class App extends StatelessWidget {
         ),
       ],
     );
+    final baseDark = ThemeData.dark();
     return MaterialApp.router(
       title: 'Habit Tracker',
-      theme: ThemeData(primarySwatch: Colors.blue),
-      darkTheme: ThemeData.dark(),
-      themeMode: ThemeMode.system,
+      themeMode: ThemeMode.dark,
+      theme: ThemeData.dark().copyWith(
+        colorScheme: baseDark.colorScheme.copyWith(
+          primary: const Color(0xFF8A2BE2),
+          secondary: const Color(0xFF8A2BE2),
+        ),
+        scaffoldBackgroundColor: const Color(0xFF121212),
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Color(0xFF121212),
+          elevation: 0,
+          iconTheme: IconThemeData(color: Colors.white),
+        ),
+        inputDecorationTheme: const InputDecorationTheme(
+          filled: true,
+          fillColor: Color(0xFF1E1E1E),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(12)),
+            borderSide: BorderSide.none,
+          ),
+          hintStyle: TextStyle(color: Colors.white70),
+        ),
+      ),
       routerConfig: router,
     );
   }

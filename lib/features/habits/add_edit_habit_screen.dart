@@ -34,6 +34,21 @@ class _AddEditHabitScreenState extends State<AddEditHabitScreen> {
   CompletionTrackingType _trackingType = CompletionTrackingType.stepByStep;
   int _completionTarget = 1;
 
+  static const List<String> _allCategories = [
+    'Art',
+    'Finance',
+    'Fitness',
+    'Health',
+    'Nutrition',
+    'Social',
+    'Study',
+    'Work',
+    'Other',
+    'Morning',
+    'Day',
+    'Evening',
+  ];
+
   bool get _isEditing => widget.habit != null;
 
   @override
@@ -61,26 +76,22 @@ class _AddEditHabitScreenState extends State<AddEditHabitScreen> {
     super.dispose();
   }
 
-  /// Opens a bottom sheet allowing the user to pick an icon.
+  /// Opens a fullscreen dialog allowing the user to pick an icon.
   Future<void> _pickIcon() async {
-    final result = await showModalBottomSheet<IconData>(
+    final result = await showDialog<IconData>(
       context: context,
       builder: (context) => _IconPicker(initial: _icon),
     );
-    if (result != null) {
-      setState(() => _icon = result);
-    }
+    if (result != null) setState(() => _icon = result);
   }
 
-  /// Allows the user to pick a color.
+  /// Allows the user to pick a color using a modal dialog.
   Future<void> _pickColor() async {
-    final result = await showModalBottomSheet<int>(
+    final result = await showDialog<int>(
       context: context,
       builder: (context) => _ColorPicker(initial: _color),
     );
-    if (result != null) {
-      setState(() => _color = result);
-    }
+    if (result != null) setState(() => _color = result);
   }
 
   /// Navigates to the streak goal screen.
@@ -113,6 +124,16 @@ class _AddEditHabitScreenState extends State<AddEditHabitScreen> {
     }
   }
 
+  void _toggleCategory(String name) {
+    setState(() {
+      if (_categories.contains(name)) {
+        _categories.remove(name);
+      } else {
+        _categories.add(name);
+      }
+    });
+  }
+
   /// Saves the habit and pops the screen.
   Future<void> _save() async {
     final name = _nameController.text.trim();
@@ -139,145 +160,223 @@ class _AddEditHabitScreenState extends State<AddEditHabitScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final isValid = _nameController.text.trim().isNotEmpty;
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(_isEditing ? 'Edit Habit' : 'New Habit'),
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            TextField(
-              controller: _nameController,
-              decoration: const InputDecoration(labelText: 'Habit Name'),
-              onChanged: (_) => setState(() {}),
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: _descriptionController,
-              decoration: const InputDecoration(labelText: 'Description'),
-            ),
-            const SizedBox(height: 16),
-            ListTile(
-              leading: Icon(_icon, color: Color(_color)),
-              title: const Text('Icon'),
-              trailing: const Icon(Icons.chevron_right),
-              onTap: _pickIcon,
-            ),
-            ListTile(
-              leading: Container(
-                width: 24,
-                height: 24,
-                decoration: BoxDecoration(
-                  color: Color(_color),
-                  shape: BoxShape.circle,
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Scaffold(
+        appBar: AppBar(
+          leading: IconButton(
+            icon: const Icon(Icons.close, size: 24),
+            onPressed: () => context.pop(),
+          ),
+          title: Text(
+            _isEditing ? 'Edit Habit' : 'New Habit',
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
+          centerTitle: true,
+          backgroundColor: Colors.transparent,
+        ),
+        body: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              TextField(
+                controller: _nameController,
+                style: const TextStyle(
+                    color: Colors.white, fontWeight: FontWeight.bold),
+                decoration: const InputDecoration(
+                  hintText: 'Name',
+                ),
+                onChanged: (_) => setState(() {}),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: _descriptionController,
+                style: const TextStyle(color: Colors.white70),
+                decoration: const InputDecoration(hintText: 'Description'),
+              ),
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  GestureDetector(
+                    onTap: _pickIcon,
+                    child: Container(
+                      width: 48,
+                      height: 48,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF1A1A1A),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: const Color(0xFF2A2A2A)),
+                      ),
+                      child: Icon(_icon, color: Color(_color)),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  GestureDetector(
+                    onTap: _pickColor,
+                    child: Container(
+                      width: 48,
+                      height: 48,
+                      decoration: BoxDecoration(
+                        color: Color(_color),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: const Color(0xFF2A2A2A)),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              const Divider(color: Color(0xFF2A2A2A)),
+              const SizedBox(height: 8),
+              GestureDetector(
+                onTap: () =>
+                    setState(() => _advancedExpanded = !_advancedExpanded),
+                child: Row(
+                  children: [
+                    const Text('Advanced Options',
+                        style: TextStyle(color: Color(0xFFB0B0B0))),
+                    const Spacer(),
+                    Icon(
+                      _advancedExpanded
+                          ? Icons.keyboard_arrow_up
+                          : Icons.keyboard_arrow_down,
+                      color: Colors.white,
+                    ),
+                  ],
                 ),
               ),
-              title: const Text('Color'),
-              trailing: const Icon(Icons.chevron_right),
-              onTap: _pickColor,
-            ),
-            const SizedBox(height: 8),
-            GestureDetector(
-              onTap: () => setState(() => _advancedExpanded = !_advancedExpanded),
-              child: Row(
-                children: [
-                  const Text('Advanced Options'),
-                  const Spacer(),
-                  Icon(_advancedExpanded
-                      ? Icons.expand_less
-                      : Icons.expand_more),
-                ],
+              AnimatedCrossFade(
+                firstChild: const SizedBox.shrink(),
+                secondChild: _buildAdvancedOptions(),
+                crossFadeState: _advancedExpanded
+                    ? CrossFadeState.showSecond
+                    : CrossFadeState.showFirst,
+                duration: const Duration(milliseconds: 300),
               ),
-            ),
-            AnimatedCrossFade(
-              firstChild: const SizedBox.shrink(),
-              secondChild: Column(
-                children: [
-                  ListTile(
-                    title: const Text('Streak Goal'),
-                    subtitle: Text(_streakGoal.name),
-                    trailing: const Icon(Icons.chevron_right),
-                    onTap: _editStreakGoal,
-                  ),
-                  ListTile(
-                    title: const Text('Reminder Days'),
-                    subtitle: Text(
-                      _reminderDays.isEmpty
-                          ? 'None'
-                          : _reminderDays.map(_weekdayName).join(', '),
-                    ),
-                    trailing: const Icon(Icons.chevron_right),
-                    onTap: _editReminders,
-                  ),
-                  ListTile(
-                    title: const Text('Categories'),
-                    subtitle: Text(
-                      _categories.isEmpty
-                          ? 'None'
-                          : _categories.join(', '),
-                    ),
-                    trailing: const Icon(Icons.chevron_right),
-                    onTap: _createCategory,
-                  ),
-                  SwitchListTile(
-                    title: const Text('Step By Step'),
-                    value: _trackingType ==
-                        CompletionTrackingType.stepByStep,
-                    onChanged: (val) => setState(() {
-                      _trackingType = val
-                          ? CompletionTrackingType.stepByStep
-                          : CompletionTrackingType.customValue;
-                    }),
-                  ),
-                  if (_trackingType ==
-                      CompletionTrackingType.customValue)
-                    Row(
-                      children: [
-                        IconButton(
-                          icon: const Icon(Icons.remove_circle_outline),
-                          onPressed: _completionTarget > 1
-                              ? () => setState(() => _completionTarget--)
-                              : null,
-                        ),
-                        Expanded(
-                          child: TextFormField(
-                            textAlign: TextAlign.center,
-                            keyboardType: TextInputType.number,
-                            initialValue: '$_completionTarget',
-                            onChanged: (v) {
-                              final val = int.tryParse(v) ?? 1;
-                              setState(() => _completionTarget = val);
-                            },
-                          ),
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.add_circle_outline),
-                          onPressed: () =>
-                              setState(() => _completionTarget++),
-                        ),
-                      ],
-                    ),
-                ],
+              const SizedBox(height: 80),
+            ],
+          ),
+        ),
+        bottomNavigationBar: Padding(
+          padding: const EdgeInsets.all(16),
+          child: SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor:
+                    isValid ? const Color(0xFF8A2BE2) : Colors.white24,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
               ),
-              crossFadeState: _advancedExpanded
-                  ? CrossFadeState.showSecond
-                  : CrossFadeState.showFirst,
-              duration: const Duration(milliseconds: 300),
+              onPressed: isValid ? _save : null,
+              child: const Text('Save'),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAdvancedOptions() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        ListTile(
+          title: const Text('Streak Goal'),
+          subtitle: Text(_streakGoal.name),
+          trailing: const Icon(Icons.chevron_right),
+          onTap: _editStreakGoal,
+        ),
+        ListTile(
+          title: const Text('Reminder'),
+          subtitle: Text(
+            _reminderDays.isEmpty
+                ? 'None'
+                : _reminderDays.map(_weekdayName).join(', '),
+          ),
+          trailing: const Icon(Icons.chevron_right),
+          onTap: _editReminders,
+        ),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            ..._allCategories.map((c) => FilterChip(
+                  label: Text(c),
+                  selected: _categories.contains(c),
+                  onSelected: (_) => _toggleCategory(c),
+                )),
+            ActionChip(
+              label: const Text('+ Create your own'),
+              onPressed: _createCategory,
             ),
           ],
         ),
-      ),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(16),
-        child: ElevatedButton(
-          onPressed: isValid ? _save : null,
-          child: const Text('Save'),
+        const SizedBox(height: 8),
+        Row(
+          children: [
+            Expanded(
+              child: ChoiceChip(
+                label: const Text('Step By Step'),
+                selected: _trackingType ==
+                    CompletionTrackingType.stepByStep,
+                onSelected: (_) => setState(
+                    () => _trackingType = CompletionTrackingType.stepByStep),
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: ChoiceChip(
+                label: const Text('Custom Value'),
+                selected:
+                    _trackingType == CompletionTrackingType.customValue,
+                onSelected: (_) => setState(
+                    () => _trackingType = CompletionTrackingType.customValue),
+              ),
+            ),
+          ],
         ),
-      ),
+        if (_trackingType == CompletionTrackingType.customValue) ...[
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              IconButton(
+                icon: const Icon(Icons.remove),
+                onPressed: _completionTarget > 1
+                    ? () => setState(() => _completionTarget--)
+                    : null,
+              ),
+              Expanded(
+                child: Text(
+                  '$_completionTarget',
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.add),
+                onPressed: () =>
+                    setState(() => _completionTarget++),
+              ),
+            ],
+          ),
+          const SizedBox(height: 4),
+          const Text(
+            'The square will be filled completely when this number is met',
+            style: TextStyle(color: Color(0xFFB0B0B0), fontSize: 12),
+          ),
+        ] else
+          const Padding(
+            padding: EdgeInsets.only(top: 8),
+            child: Text(
+              'Increment by 1 with each completion.',
+              style: TextStyle(color: Color(0xFFB0B0B0), fontSize: 12),
+            ),
+          ),
+      ],
     );
   }
 
@@ -329,26 +428,34 @@ class _IconPickerState extends State<_IconPicker> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Column(
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Pick Icon'),
+        leading: IconButton(
+          icon: const Icon(Icons.close),
+          onPressed: () => Navigator.pop(context),
+        ),
+        centerTitle: true,
+      ),
+      body: Column(
         children: [
           Padding(
             padding: const EdgeInsets.all(8),
             child: TextField(
               controller: _searchController,
               decoration: const InputDecoration(
-                hintText: 'Search icons',
+                hintText: 'Type a search term',
                 prefixIcon: Icon(Icons.search),
               ),
             ),
           ),
           Expanded(
             child: GridView.builder(
-              padding: const EdgeInsets.all(8),
+              padding: const EdgeInsets.all(12),
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 6,
-                crossAxisSpacing: 8,
-                mainAxisSpacing: 8,
+                crossAxisCount: 7,
+                crossAxisSpacing: 12,
+                mainAxisSpacing: 12,
               ),
               itemCount: _icons.length,
               itemBuilder: (context, index) {
@@ -356,22 +463,26 @@ class _IconPickerState extends State<_IconPicker> {
                 final selected = icon == _selected;
                 return GestureDetector(
                   onTap: () => setState(() => _selected = icon),
-                  child: Container(
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
                     decoration: BoxDecoration(
-                      color: selected
-                          ? Theme.of(context).colorScheme.primary
-                          : Colors.transparent,
-                      borderRadius: BorderRadius.circular(8),
+                      color: const Color(0xFF1A1A1A),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: selected
+                            ? const Color(0xFF8A2BE2)
+                            : Colors.transparent,
+                        width: 2,
+                      ),
                     ),
-                    child: Icon(icon,
-                        color: selected ? Colors.white : Colors.white70),
+                    child: Icon(icon, color: Colors.white),
                   ),
                 );
               },
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(16),
             child: ElevatedButton(
               onPressed: () => Navigator.pop(context, _selected),
               child: const Text('Select'),
@@ -393,18 +504,35 @@ class _ColorPicker extends StatefulWidget {
 
 class _ColorPickerState extends State<_ColorPicker> {
   static const colors = [
-    Colors.red,
     Colors.pink,
-    Colors.purple,
-    Colors.deepPurple,
-    Colors.blue,
-    Colors.lightBlue,
-    Colors.cyan,
-    Colors.teal,
-    Colors.green,
-    Colors.lime,
+    Colors.red,
+    Colors.deepOrange,
     Colors.orange,
+    Colors.amber,
+    Colors.yellow,
+    Colors.lightGreen,
+    Colors.green,
+    Colors.teal,
+    Colors.cyan,
+    Colors.lightBlue,
+    Colors.blue,
+    Colors.indigo,
+    Colors.deepPurple,
+    Colors.purple,
     Colors.brown,
+    Colors.grey,
+    Colors.blueGrey,
+    Color(0xFFB39DDB),
+    Color(0xFF80CBC4),
+    Color(0xFFFFAB91),
+    Color(0xFFE6EE9C),
+    Color(0xFFCE93D8),
+    Color(0xFFA5D6A7),
+    Color(0xFFFFF59D),
+    Color(0xFFB0BEC5),
+    Color(0xFF90A4AE),
+    Color(0xFFE0E0E0),
+    Color(0xFF4DB6AC),
   ];
   late int _selected;
 
@@ -416,16 +544,24 @@ class _ColorPickerState extends State<_ColorPicker> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Column(
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Pick Color'),
+        leading: IconButton(
+          icon: const Icon(Icons.close),
+          onPressed: () => Navigator.pop(context),
+        ),
+        centerTitle: true,
+      ),
+      body: Column(
         children: [
           Expanded(
             child: GridView.builder(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(12),
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 5,
-                crossAxisSpacing: 8,
-                mainAxisSpacing: 8,
+                crossAxisCount: 6,
+                crossAxisSpacing: 12,
+                mainAxisSpacing: 12,
               ),
               itemCount: colors.length,
               itemBuilder: (context, index) {
@@ -433,27 +569,32 @@ class _ColorPickerState extends State<_ColorPicker> {
                 final selected = color.value == _selected;
                 return GestureDetector(
                   onTap: () => setState(() => _selected = color.value),
-                  child: Container(
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    width: 40,
+                    height: 40,
                     decoration: BoxDecoration(
                       color: color,
-                      shape: BoxShape.circle,
-                      border: selected
-                          ? Border.all(
-                              color: Colors.white,
-                              width: 3,
-                            )
-                          : null,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(
+                        color: selected
+                            ? const Color(0xFF8A2BE2)
+                            : Colors.transparent,
+                        width: 3,
+                      ),
                     ),
                   ),
                 );
               },
             ),
           ),
-          ElevatedButton(
-            onPressed: () => Navigator.pop(context, _selected),
-            child: const Text('Select'),
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: ElevatedButton(
+              onPressed: () => Navigator.pop(context, _selected),
+              child: const Text('Select'),
+            ),
           ),
-          const SizedBox(height: 8),
         ],
       ),
     );

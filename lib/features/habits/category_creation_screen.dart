@@ -20,7 +20,7 @@ class _CategoryCreationScreenState extends State<CategoryCreationScreen> {
   }
 
   Future<void> _pickIcon() async {
-    final icon = await showModalBottomSheet<IconData>(
+    final icon = await showDialog<IconData>(
       context: context,
       builder: (context) => const _IconPicker(),
     );
@@ -37,7 +37,16 @@ class _CategoryCreationScreenState extends State<CategoryCreationScreen> {
   Widget build(BuildContext context) {
     final isValid = _nameController.text.trim().isNotEmpty;
     return Scaffold(
-      appBar: AppBar(title: const Text('New Category')),
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.close, size: 24),
+          onPressed: () => Navigator.pop(context),
+        ),
+        centerTitle: true,
+        title: const Text('Create Category',
+            style: TextStyle(fontWeight: FontWeight.bold)),
+        backgroundColor: Colors.transparent,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -54,9 +63,21 @@ class _CategoryCreationScreenState extends State<CategoryCreationScreen> {
               onChanged: (_) => setState(() {}),
             ),
             const Spacer(),
-            ElevatedButton(
-              onPressed: isValid ? _save : null,
-              child: const Text('Create'),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: isValid
+                      ? const Color(0xFF8A2BE2)
+                      : Colors.white24,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                ),
+                onPressed: isValid ? _save : null,
+                child: const Text('Save'),
+              ),
             )
           ],
         ),
@@ -100,26 +121,34 @@ class _IconPickerState extends State<_IconPicker> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Column(
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Pick Icon'),
+        leading: IconButton(
+          icon: const Icon(Icons.close),
+          onPressed: () => Navigator.pop(context),
+        ),
+        centerTitle: true,
+      ),
+      body: Column(
         children: [
           Padding(
             padding: const EdgeInsets.all(8),
             child: TextField(
               controller: _searchController,
               decoration: const InputDecoration(
-                hintText: 'Search icons',
+                hintText: 'Type a search term',
                 prefixIcon: Icon(Icons.search),
               ),
             ),
           ),
           Expanded(
             child: GridView.builder(
-              padding: const EdgeInsets.all(8),
+              padding: const EdgeInsets.all(12),
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 6,
-                crossAxisSpacing: 8,
-                mainAxisSpacing: 8,
+                crossAxisCount: 7,
+                crossAxisSpacing: 12,
+                mainAxisSpacing: 12,
               ),
               itemCount: _icons.length,
               itemBuilder: (context, index) {
@@ -127,22 +156,26 @@ class _IconPickerState extends State<_IconPicker> {
                 final selected = icon == _selected;
                 return GestureDetector(
                   onTap: () => setState(() => _selected = icon),
-                  child: Container(
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
                     decoration: BoxDecoration(
-                      color: selected
-                          ? Theme.of(context).colorScheme.primary
-                          : Colors.transparent,
-                      borderRadius: BorderRadius.circular(8),
+                      color: const Color(0xFF1A1A1A),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: selected
+                            ? const Color(0xFF8A2BE2)
+                            : Colors.transparent,
+                        width: 2,
+                      ),
                     ),
-                    child: Icon(icon,
-                        color: selected ? Colors.white : Colors.white70),
+                    child: Icon(icon, color: Colors.white),
                   ),
                 );
               },
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(16),
             child: ElevatedButton(
               onPressed: () => Navigator.pop(context, _selected),
               child: const Text('Select'),
