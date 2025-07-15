@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 /// Using this map allows the app to reference icons without invoking
 /// the [IconData] constructor at runtime, enabling tree shaking of the
 /// Material icon font.
-const Map<int, IconData> kIconMap = {
+ Map<int, IconData> kIconMap = {
   Icons.star_border.codePoint: Icons.star_border,
   Icons.favorite_border.codePoint: Icons.favorite_border,
   Icons.run_circle_outlined.codePoint: Icons.run_circle_outlined,
