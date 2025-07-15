@@ -246,11 +246,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 for (final habit in habits)
                   HabitItemWidget(
                     habit: habit,
+
                     completionMap:
                         _completionData.putIfAbsent(habit.id, () => {}),
                     todayCount: _todayCount(habit.id),
                     onIncrement: () => _incrementToday(habit.id),
                     onDecrement: () => _decrementToday(habit.id),
+
                     currentStreak: _currentStreaks[habit.id],
                     longestStreak: _longestStreaks[habit.id],
                     onEdit: () => _editHabit(habit),
