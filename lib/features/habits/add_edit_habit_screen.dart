@@ -24,6 +24,8 @@ class _AddEditHabitScreenState extends State<AddEditHabitScreen> {
   late final TextEditingController _descriptionController;
 
   IconData _icon = Icons.check;
+  // Selected ARGB value used for progress tiles on the Home screen. This does
+  // not tint the habit icon.
   int _color = Colors.blue.value;
 
   bool _advancedExpanded = false;
@@ -221,7 +223,9 @@ class _AddEditHabitScreenState extends State<AddEditHabitScreen> {
                     color: const Color(0xFF1A1A1A),
                     borderRadius: BorderRadius.circular(20),
                   ),
-                  child: Icon(_icon, color: Color(_color), size: 40),
+                  // Icon preview uses a neutral background. The selected color
+                  // only affects progress tiles, not the icon itself.
+                  child: Icon(_icon, color: Colors.white, size: 40),
                 ),
               ),
               const SizedBox(height: 12),
@@ -329,7 +333,9 @@ class _AddEditHabitScreenState extends State<AddEditHabitScreen> {
       children: [
         ListTile(
           title: const Text('Icon'),
-          trailing: Icon(_icon, color: Color(_color)),
+          // Icon color remains white; habit color only influences progress
+          // tiles on the home screen.
+          trailing: Icon(_icon, color: Colors.white),
           onTap: _pickIcon,
         ),
         ListTile(
