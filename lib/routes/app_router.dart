@@ -7,6 +7,7 @@ import '../features/habits/streak_goal_screen.dart';
 import '../features/habits/reminder_screen.dart';
 import '../features/archive/archive_screen.dart';
 import '../features/settings/settings_screen.dart';
+import '../features/settings/theme_screen.dart';
 import '../core/data/models/habit.dart';
 
 GoRouter createRouter(bool onboardingComplete) {
@@ -48,6 +49,10 @@ GoRouter createRouter(bool onboardingComplete) {
         path: '/settings',
         name: 'settings',
         builder: (_, __) => const SettingsScreen(),
+      ),
+      GoRoute(
+        path: '/theme',
+        builder: (_, __) => const ThemeScreen(),
       ),
     ],
   );
