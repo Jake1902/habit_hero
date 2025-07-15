@@ -6,6 +6,8 @@ import 'notification_service.dart';
 import '../data/habit_repository.dart';
 import '../data/completion_repository.dart';
 import 'export_import_service.dart';
+import '../analytics/analytics_service.dart';
+import 'settings_provider.dart';
 
 import 'notification_permission_service.dart';
 
@@ -19,5 +21,10 @@ void registerServices(GetIt getIt, SharedPreferences prefs) {
 
   getIt.registerLazySingleton<NotificationPermissionService>(
       () => NotificationPermissionService(prefs));
+
+  getIt.registerLazySingleton<AnalyticsService>(
+      () => AnalyticsService(getIt<HabitRepository>(), getIt<CompletionRepository>()));
+
+  getIt.registerLazySingleton<SettingsProvider>(() => SettingsProvider(prefs));
 
 }

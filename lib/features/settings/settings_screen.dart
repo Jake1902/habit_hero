@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+
+import '../../core/services/settings_provider.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -51,6 +54,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 style: TextStyle(color: Color(0xFFB0B0B0))),
             trailing: const Icon(Icons.chevron_right, color: Colors.white),
             onTap: () => context.push('/theme'),
+          ),
+          SwitchListTile(
+            activeColor: const Color(0xFF8A2BE2),
+            title: const Text('Show quick stats on Home',
+                style: TextStyle(color: Colors.white)),
+            value: context.watch<SettingsProvider>().showQuickStats,
+            onChanged: (val) =>
+                context.read<SettingsProvider>().setShowQuickStats(val),
           ),
         ],
       ),
