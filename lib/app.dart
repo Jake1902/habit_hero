@@ -34,6 +34,7 @@ class _AppState extends State<App> {
       colorScheme: baseDark.colorScheme.copyWith(
         primary: const Color(0xFF8A2BE2),
         secondary: const Color(0xFF8A2BE2),
+        onPrimary: Colors.white,
       ),
       scaffoldBackgroundColor: const Color(0xFF121212),
       appBarTheme: const AppBarTheme(
@@ -56,6 +57,7 @@ class _AppState extends State<App> {
       colorScheme: baseLight.colorScheme.copyWith(
         primary: const Color(0xFF8A2BE2),
         secondary: const Color(0xFF8A2BE2),
+        onPrimary: Colors.white,
       ),
       scaffoldBackgroundColor: Colors.white,
       appBarTheme: const AppBarTheme(
