@@ -39,6 +39,7 @@ class _AddEditHabitScreenState extends State<AddEditHabitScreen> {
   List<String> _categories = [];
   CompletionTrackingType _trackingType = CompletionTrackingType.stepByStep;
   int _completionTarget = 1;
+  bool _isMultiple = false;
 
   static const List<String> _allCategories = [
     'Art',
@@ -105,9 +106,11 @@ class _AddEditHabitScreenState extends State<AddEditHabitScreen> {
       _categories = List.of(habit.categories);
       _trackingType = habit.completionTrackingType;
       _completionTarget = habit.completionTarget;
+      _isMultiple = habit.isMultiple;
     } else {
       _trackingType = CompletionTrackingType.stepByStep;
       _completionTarget = 1;
+      _isMultiple = false;
     }
   }
 
@@ -187,6 +190,10 @@ class _AddEditHabitScreenState extends State<AddEditHabitScreen> {
   Future<void> _save() async {
     final name = _nameController.text.trim();
     if (name.isEmpty) return;
+    if (!_isMultiple) {
+      _trackingType = CompletionTrackingType.customValue;
+      _completionTarget = 1;
+    }
     final habit = Habit(
       id: widget.habit?.id ?? const Uuid().v4(),
       name: name,
@@ -200,6 +207,7 @@ class _AddEditHabitScreenState extends State<AddEditHabitScreen> {
       categories: _categories,
       completionTrackingType: _trackingType,
       completionTarget: _completionTarget,
+      isMultiple: _isMultiple,
     );
     if (_isEditing) {
       await HabitRepository.updateHabit(habit);
@@ -440,24 +448,47 @@ class _AddEditHabitScreenState extends State<AddEditHabitScreen> {
           children: [
             Expanded(
               child: ChoiceChip(
-                label: const Text('Step By Step'),
-                selected: _trackingType == CompletionTrackingType.stepByStep,
-                onSelected: (_) => setState(
-                    () => _trackingType = CompletionTrackingType.stepByStep),
+                label: const Text('Single'),
+                selected: !_isMultiple,
+                onSelected: (_) => setState(() => _isMultiple = false),
               ),
             ),
             const SizedBox(width: 8),
             Expanded(
               child: ChoiceChip(
-                label: const Text('Custom Value'),
-                selected: _trackingType == CompletionTrackingType.customValue,
-                onSelected: (_) => setState(
-                    () => _trackingType = CompletionTrackingType.customValue),
+                label: const Text('Multiple'),
+                selected: _isMultiple,
+                onSelected: (_) => setState(() => _isMultiple = true),
               ),
             ),
           ],
         ),
-        if (_trackingType == CompletionTrackingType.customValue) ...[
+        if (_isMultiple) ...[
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              Expanded(
+                child: ChoiceChip(
+                  label: const Text('Step By Step'),
+                  selected: _trackingType == CompletionTrackingType.stepByStep,
+                  onSelected: (_) => setState(
+                      () => _trackingType = CompletionTrackingType.stepByStep),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: ChoiceChip(
+                  label: const Text('Custom Value'),
+                  selected: _trackingType == CompletionTrackingType.customValue,
+                  onSelected: (_) => setState(
+                      () => _trackingType = CompletionTrackingType.customValue),
+                ),
+              ),
+            ],
+          ),
+        ],
+        if (_isMultiple &&
+            _trackingType == CompletionTrackingType.customValue) ...[
           const SizedBox(height: 8),
           Row(
             children: [
