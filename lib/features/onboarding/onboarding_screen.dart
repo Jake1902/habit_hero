@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-/// OnboardingScreen displays a 3-page introduction to the app.
+/// Displays a simple three page onboarding flow.
 ///
-/// A [PageView] is used to let users swipe horizontally between pages.
-/// Each page shows an icon, a title and a subtitle explaining a feature.
-/// Users can navigate using the Back/Next buttons at the bottom or skip
-/// the onboarding entirely using the button at the top right.
-/// When the onboarding is finished or skipped, a flag is stored using
-/// [SharedPreferences] and the app navigates to the `/home` route.
+/// The screen uses a [PageView] so the user can swipe horizontally between
+/// pages. Each page shows an icon, title and subtitle describing a feature of
+/// the app. Users can navigate with Back/Next buttons or skip the onboarding
+/// entirely. Completion is stored with [SharedPreferences] and the user is
+/// navigated to the '/home' route.
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
 
@@ -17,34 +16,53 @@ class OnboardingScreen extends StatefulWidget {
 }
 
 class _OnboardingScreenState extends State<OnboardingScreen> {
-  final PageController _pageController = PageController();
-  int _currentPage = 0;
+  final PageController _controller = PageController();
+  int _currentIndex = 0;
 
-  /// Marks the onboarding as complete and navigates to the home screen.
-  Future<void> _completeOnboarding(BuildContext context) async {
+  /// Data describing each onboarding page.
+  final List<_PageData> _pages = const [
+    _PageData(
+      icon: Icons.checklist,
+      title: 'Track Your Habits',
+      subtitle: 'Stay on top of your daily goals.',
+    ),
+    _PageData(
+      icon: Icons.local_fire_department,
+      title: 'Stay Motivated with Streaks',
+      subtitle: 'Build momentum and keep going!',
+    ),
+    _PageData(
+      icon: Icons.notifications,
+      title: 'Never Miss a Reminder',
+      subtitle: 'Get notified so you never forget.',
+    ),
+  ];
+
+  /// Marks onboarding as complete and navigates to the home route.
+  Future<void> _completeOnboarding() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('onboarding_complete', true);
-    if (context.mounted) {
+    if (mounted) {
       Navigator.of(context).pushReplacementNamed('/home');
     }
   }
 
-  /// Moves to the next page or completes onboarding on the last page.
-  void _nextPage() {
-    if (_currentPage == 2) {
-      _completeOnboarding(context);
+  /// Advances to the next page or finishes onboarding on the last page.
+  void _next() {
+    if (_currentIndex == _pages.length - 1) {
+      _completeOnboarding();
     } else {
-      _pageController.nextPage(
+      _controller.nextPage(
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
       );
     }
   }
 
-  /// Moves to the previous page if possible.
-  void _previousPage() {
-    if (_currentPage > 0) {
-      _pageController.previousPage(
+  /// Returns to the previous page if possible.
+  void _back() {
+    if (_currentIndex > 0) {
+      _controller.previousPage(
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
       );
@@ -53,103 +71,114 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   @override
   void dispose() {
-    _pageController.dispose();
+    _controller.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final pages = [
-      _buildPage(
-        icon: Icons.track_changes,
-        title: 'Track Habits',
-        subtitle: 'Monitor your daily habits and stay consistent.',
-      ),
-      _buildPage(
-        icon: Icons.star,
-        title: 'Earn Rewards',
-        subtitle: 'Achieve goals and collect badges for motivation.',
-      ),
-      _buildPage(
-        icon: Icons.insights,
-        title: 'Get Insights',
-        subtitle: 'Analyze your progress with detailed statistics.',
-      ),
-    ];
+    final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Welcome'),
-        actions: [
-          TextButton(
-            onPressed: () => _completeOnboarding(context),
-            child: const Text(
-              'Skip',
-              style: TextStyle(color: Colors.white),
-            ),
-          ),
-        ],
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            child: PageView(
-              controller: _pageController,
-              onPageChanged: (index) {
-                setState(() {
-                  _currentPage = index;
-                });
+      body: SafeArea(
+        child: Stack(
+          children: [
+            PageView.builder(
+              controller: _controller,
+              itemCount: _pages.length,
+              onPageChanged: (index) => setState(() => _currentIndex = index),
+              itemBuilder: (context, index) {
+                final page = _pages[index];
+                return Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      const SizedBox(height: 40),
+                      Center(
+                        child: Container(
+                          width: 120,
+                          height: 120,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: theme.colorScheme.primary.withOpacity(0.1),
+                          ),
+                          child: Icon(
+                            page.icon,
+                            size: 64,
+                            color: theme.colorScheme.primary,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 40),
+                      Text(
+                        page.title,
+                        textAlign: TextAlign.center,
+                        style: textTheme.headlineSmall?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        page.subtitle,
+                        textAlign: TextAlign.center,
+                        style: textTheme.bodyMedium,
+                      ),
+                      const Spacer(),
+                    ],
+                  ),
+                );
               },
-              children: pages,
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                ElevatedButton(
-                  onPressed: _currentPage == 0 ? null : _previousPage,
-                  child: const Text('Back'),
-                ),
-                ElevatedButton(
-                  onPressed: _nextPage,
-                  child: Text(_currentPage == 2 ? 'Get Started' : 'Next'),
-                ),
-              ],
+            Positioned(
+              top: 0,
+              right: 0,
+              child: TextButton(
+                onPressed: _completeOnboarding,
+                child: const Text('Skip'),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
+      ),
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        child: Row(
+          children: [
+            Expanded(
+              child: OutlinedButton(
+                onPressed: _currentIndex == 0 ? null : _back,
+                child: const Text('Back'),
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: ElevatedButton(
+                onPressed: _next,
+                child: Text(
+                  _currentIndex == _pages.length - 1
+                      ? 'Get Started'
+                      : 'Next',
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
+}
 
-  /// Helper method to build a single onboarding page.
-  Widget _buildPage({
-    required IconData icon,
-    required String title,
-    required String subtitle,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.all(32.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, size: 120, color: Theme.of(context).colorScheme.primary),
-          const SizedBox(height: 24),
-          Text(
-            title,
-            style: Theme.of(context).textTheme.headlineSmall,
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 12),
-          Text(
-            subtitle,
-            style: Theme.of(context).textTheme.bodyLarge,
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
-    );
-  }
+/// Model class holding icon and text for a single page.
+class _PageData {
+  final IconData icon;
+  final String title;
+  final String subtitle;
+
+  const _PageData({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+  });
 }
