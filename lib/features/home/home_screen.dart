@@ -201,6 +201,13 @@ class _HomeScreenState extends State<HomeScreen> {
                   currentStreak: current,
                   longestStreak: longest,
                   onEdit: () => _editHabit(habit),
+                  onDayTapped: (day) {
+                    context.push('/calendar_edit', extra: {
+                      'habitId': habit.id,
+                      'habitName': habit.name,
+                      'completionMap': data,
+                    });
+                  },
                 );
               },
             ),

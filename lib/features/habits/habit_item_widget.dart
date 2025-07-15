@@ -11,6 +11,7 @@ class HabitItemWidget extends StatelessWidget {
     required this.completionData,
     required this.completedToday,
     required this.onToggle,
+    required this.onDayTapped,
     this.onEdit,
     this.currentStreak,
     this.longestStreak,
@@ -30,6 +31,9 @@ class HabitItemWidget extends StatelessWidget {
 
   /// Callback when the habit should be edited.
   final VoidCallback? onEdit;
+
+  /// Callback when a heatmap day is tapped.
+  final void Function(DateTime)? onDayTapped;
 
   /// Current streak count.
   final int? currentStreak;
@@ -119,6 +123,7 @@ class HabitItemWidget extends StatelessWidget {
             name: habit.name,
             tileColor: Color(habit.color),
             showHeader: false,
+            onDayTapped: onDayTapped,
           ),
           const Divider(color: Colors.white24),
         ],
