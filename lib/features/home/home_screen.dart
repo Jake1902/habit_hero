@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../../core/constants/radii.dart';
+import '../../core/constants/spacing.dart';
+import '../../core/constants/text_styles.dart';
+import '../../widgets/app_button.dart';
 
 import '../../core/data/habit_repository.dart';
 import '../../core/data/models/habit.dart';
@@ -85,7 +89,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void _showHabitOptions(Habit habit) {
     showModalBottomSheet<void>(
       context: context,
-      backgroundColor: const Color(0xFF1E1E1E),
+      backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
       builder: (context) => SafeArea(
         child: ListTile(
           leading: const Icon(Icons.archive, color: Colors.white),
@@ -98,7 +102,6 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
-
 
   int _todayCount(String id) {
     final key = DateFormat('yyyy-MM-dd').format(DateTime.now().toUtc());
@@ -143,26 +146,32 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    const purple = Color(0xFF8A2BE2);
+    final scheme = Theme.of(context).colorScheme;
     return Scaffold(
-      backgroundColor: const Color(0xFF121212),
+      backgroundColor: scheme.background,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF121212),
+        backgroundColor: scheme.background,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.settings, color: Colors.white),
           onPressed: () => context.push('/settings'),
         ),
         title: RichText(
-          text: const TextSpan(
-            style: TextStyle(
+          text: TextSpan(
+            style: const TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 20,
               fontFamily: 'Roboto',
             ),
             children: [
-              TextSpan(text: 'Habit', style: TextStyle(color: Colors.white)),
-              TextSpan(text: 'Hero', style: TextStyle(color: purple)),
+              const TextSpan(
+                text: 'Habit',
+                style: TextStyle(color: Colors.white),
+              ),
+              TextSpan(
+                text: 'Hero',
+                style: TextStyle(color: scheme.primary),
+              ),
             ],
           ),
         ),
@@ -184,7 +193,7 @@ class _HomeScreenState extends State<HomeScreen> {
           if (habits.isEmpty) {
             return Center(
               child: Padding(
-                padding: const EdgeInsets.all(24),
+                padding: const EdgeInsets.all(AppSpacing.s24),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -195,36 +204,31 @@ class _HomeScreenState extends State<HomeScreen> {
                         shape: BoxShape.circle,
                         color: Colors.white.withOpacity(0.1),
                       ),
-                      child: const Icon(Icons.add, color: Colors.white, size: 40),
-                    ),
-                    const SizedBox(height: 24),
-                    const Text(
-                      'No habit found',
-                      style: TextStyle(
+                      child: const Icon(
+                        Icons.add,
                         color: Colors.white,
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
+                        size: 40,
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: AppSpacing.s24),
+                    Text(
+                      'No habit found',
+                      style: AppTextStyles.headline.copyWith(
+                        color: Colors.white,
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.s8),
                     const Text(
                       'Create a new habit to track your progress',
                       textAlign: TextAlign.center,
-                      style: TextStyle(color: Colors.white70),
+                      style: AppTextStyles.caption,
                     ),
-                    const SizedBox(height: 32),
+                    const SizedBox(height: AppSpacing.s32),
                     SizedBox(
                       width: double.infinity,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: purple,
-                          foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                        ),
+                      child: AppButton(
+                        label: 'Get started',
                         onPressed: _goToAddHabit,
-                        child: const Text('Get started'),
                       ),
                     ),
                   ],
@@ -240,15 +244,17 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 if (context.watch<SettingsProvider>().showQuickStats)
                   const Padding(
-                    padding: EdgeInsets.only(bottom: 16),
+                    padding: EdgeInsets.only(bottom: AppSpacing.s16),
                     child: AnalyticsQuickRow(),
                   ),
                 for (final habit in habits)
                   HabitItemWidget(
                     habit: habit,
 
-                    completionMap:
-                        _completionData.putIfAbsent(habit.id, () => {}),
+                    completionMap: _completionData.putIfAbsent(
+                      habit.id,
+                      () => {},
+                    ),
                     todayCount: _todayCount(habit.id),
                     onIncrement: () => _incrementToday(habit.id),
                     onDecrement: () => _decrementToday(habit.id),
@@ -260,16 +266,17 @@ class _HomeScreenState extends State<HomeScreen> {
                     onLongPress: () => _showHabitOptions(habit),
 
                     onDayTapped: (day) {
-                      context.push('/calendar_edit', extra: {
-                        'habitId': habit.id,
-                        'habitName': habit.name,
-                        'completionMap': _completionData[habit.id],
-                      });
+                      context.push(
+                        '/calendar_edit',
+                        extra: {
+                          'habitId': habit.id,
+                          'habitName': habit.name,
+                          'completionMap': _completionData[habit.id],
+                        },
+                      );
                     },
-
                   ),
               ],
-
             ),
           );
         },
