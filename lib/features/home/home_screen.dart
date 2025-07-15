@@ -3,6 +3,8 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/data/habit_repository.dart';
 import '../../core/data/models/habit.dart';
+import '../dashboard/heatmap_widget.dart';
+import 'dart:math';
 
 /// Home screen shown when the user has completed onboarding.
 ///
@@ -16,6 +18,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   late Future<List<Habit>> _habitsFuture;
+  final Map<String, Map<DateTime, int>> _completionData = {};
 
   @override
   void initState() {
@@ -36,6 +39,33 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _editHabit(Habit habit) {
     context.go('/add_habit', extra: habit);
+  }
+
+  Map<DateTime, int> _generateMockCompletion() {
+    final map = <DateTime, int>{};
+    final now = DateTime.now();
+    final random = Random();
+    for (var i = 0; i < 90; i++) {
+      final day = DateTime(now.year, now.month, now.day).subtract(Duration(days: i));
+      map[day] = random.nextInt(3); // 0-2 completions
+    }
+    return map;
+  }
+
+  bool _completedToday(String id) {
+    final today = DateTime.now();
+    final key = DateTime(today.year, today.month, today.day);
+    final data = _completionData[id];
+    if (data == null) return false;
+    return (data[key] ?? 0) > 0;
+  }
+
+  void _toggleToday(String id, bool? value) {
+    final today = DateTime.now();
+    final key = DateTime(today.year, today.month, today.day);
+    final data = _completionData.putIfAbsent(id, _generateMockCompletion);
+    data[key] = (value ?? false) ? 1 : 0;
+    setState(() {});
   }
 
   @override
@@ -136,15 +166,44 @@ class _HomeScreenState extends State<HomeScreen> {
               itemCount: habits.length,
               itemBuilder: (context, index) {
                 final habit = habits[index];
-                return ListTile(
-                  leading: Icon(
-                    IconData(habit.iconData, fontFamily: 'MaterialIcons'),
-                    color: Color(habit.color),
+                final data =
+                    _completionData.putIfAbsent(habit.id, _generateMockCompletion);
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(
+                            IconData(habit.iconData, fontFamily: 'MaterialIcons'),
+                            color: Color(habit.color),
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              habit.name,
+                              style: const TextStyle(
+                                  color: Colors.white, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          Checkbox(
+                            value: _completedToday(habit.id),
+                            onChanged: (v) => _toggleToday(habit.id, v),
+                            activeColor: purple,
+                          )
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      HabitHeatmap(
+                        completionData: data,
+                        icon: IconData(habit.iconData, fontFamily: 'MaterialIcons'),
+                        name: habit.name,
+                        showHeader: false,
+                      ),
+                      const Divider(color: Colors.white24),
+                    ],
                   ),
-                  title: Text(habit.name, style: const TextStyle(color: Colors.white)),
-                  subtitle: Text(habit.description,
-                      style: const TextStyle(color: Colors.white70)),
-                  onTap: () => _editHabit(habit),
                 );
               },
             ),
