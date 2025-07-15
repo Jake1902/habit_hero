@@ -10,6 +10,7 @@ import 'package:get_it/get_it.dart';
 import '../../core/services/notification_service.dart';
 import '../../core/services/notification_permission_service.dart';
 import '../../core/data/models/habit_template.dart';
+import '../../core/constants/icon_mapping.dart';
 
 /// Screen for creating or editing a habit.
 class AddEditHabitScreen extends StatefulWidget {
@@ -98,7 +99,7 @@ class _AddEditHabitScreenState extends State<AddEditHabitScreen> {
     _descriptionController =
         TextEditingController(text: habit?.description ?? '');
     if (habit != null) {
-      _icon = IconData(habit.iconData, fontFamily: 'MaterialIcons');
+      _icon = iconFromCodePoint(habit.iconData);
       _color = habit.color;
       _streakGoal = habit.streakGoal;
       _reminderTime = habit.reminderTime;
@@ -262,8 +263,7 @@ class _AddEditHabitScreenState extends State<AddEditHabitScreen> {
                     setState(() {
                       _nameController.text = tpl.name;
                       _descriptionController.text = tpl.description;
-                      _icon =
-                          IconData(tpl.iconData, fontFamily: 'MaterialIcons');
+                      _icon = iconFromCodePoint(tpl.iconData);
                       _color = tpl.color;
                       _reminderTime = tpl.reminderTime;
                       _reminderWeekdays = tpl.reminderWeekdays;

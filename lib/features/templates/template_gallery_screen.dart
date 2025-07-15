@@ -6,6 +6,7 @@ import '../../core/constants/text_styles.dart';
 import '../../core/services/template_service.dart';
 import '../../core/data/models/habit_template.dart';
 import '../../widgets/app_button.dart';
+import '../../core/constants/icon_mapping.dart';
 
 class TemplateGalleryScreen extends StatelessWidget {
   const TemplateGalleryScreen({super.key});
@@ -54,7 +55,7 @@ class TemplateGalleryScreen extends StatelessWidget {
                         radius: 24,
                         backgroundColor: Color(tpl.color),
                         child: Icon(
-                          IconData(tpl.iconData, fontFamily: 'MaterialIcons'),
+                          iconFromCodePoint(tpl.iconData),
                           color: scheme.onPrimary,
                         ),
                       ),
