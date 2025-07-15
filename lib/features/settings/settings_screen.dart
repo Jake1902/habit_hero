@@ -34,6 +34,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
             trailing: const Icon(Icons.chevron_right, color: Colors.white),
             onTap: () => context.go('/archive'),
           ),
+          ListTile(
+            leading: const Icon(Icons.backup, color: Colors.white),
+            title: const Text('Backup & Restore',
+                style: TextStyle(color: Colors.white)),
+            subtitle: const Text('Export or import your data',
+                style: TextStyle(color: Color(0xFFB0B0B0))),
+            trailing: const Icon(Icons.chevron_right, color: Colors.white),
+            onTap: () => context.go('/backup_restore'),
+          ),
           const Divider(color: Color(0xFF2A2A2A)),
           ListTile(
             leading: const Icon(Icons.color_lens_outlined, color: Colors.white),
