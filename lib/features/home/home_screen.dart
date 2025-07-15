@@ -228,8 +228,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 for (final habit in habits)
                   HabitItemWidget(
                     habit: habit,
-                    completionData:
-                        _completionData.putIfAbsent(habit.id, _generateMockCompletion),
+                    completionMap: _completionData[habit.id] ?? {},
                     completedToday: _completedToday(habit.id),
                     onToggle: (v) => _toggleToday(habit.id, v),
                     currentStreak: _currentStreaks[habit.id],
