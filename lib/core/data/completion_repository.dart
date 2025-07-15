@@ -39,9 +39,9 @@ class CompletionRepository {
   Future<void> saveCompletionDates(String habitId, List<DateTime> dates) async {
     final map = <String, List<String>>{};
     for (final d in dates) {
-      final key = _fmt.format(d.toUtc());
+      final key = _fmt.format(d);
       final list = map.putIfAbsent(key, () => <String>[]);
-      list.add(d.toUtc().toIso8601String());
+      list.add(d.toIso8601String());
     }
     await _save(habitId, map);
   }
@@ -55,11 +55,11 @@ class CompletionRepository {
   /// Toggles completion state for a [date] of the habit (0/1 legacy).
   Future<void> toggleCompletion(String habitId, DateTime date) async {
     final map = await _load(habitId);
-    final key = _fmt.format(date.toUtc());
+    final key = _fmt.format(date);
     if (map.containsKey(key)) {
       map.remove(key);
     } else {
-      map[key] = [date.toUtc().toIso8601String()];
+      map[key] = [date.toIso8601String()];
     }
     await _save(habitId, map);
   }
@@ -67,7 +67,7 @@ class CompletionRepository {
   /// Increment today's completion count.
   Future<void> incrementToday(String habitId) async {
     final map = await _load(habitId);
-    final now = DateTime.now().toUtc();
+    final now = DateTime.now();
     final key = _fmt.format(now);
     final list = map.putIfAbsent(key, () => <String>[]);
     list.add(now.toIso8601String());
@@ -77,7 +77,7 @@ class CompletionRepository {
   /// Decrement today's completion count.
   Future<void> decrementToday(String habitId) async {
     final map = await _load(habitId);
-    final now = DateTime.now().toUtc();
+    final now = DateTime.now();
     final key = _fmt.format(now);
     final list = map[key];
     if (list == null || list.isEmpty) return;
@@ -89,7 +89,7 @@ class CompletionRepository {
   /// Returns today's completion count.
   Future<int> todayCount(String habitId) async {
     final map = await _load(habitId);
-    final key = _fmt.format(DateTime.now().toUtc());
+    final key = _fmt.format(DateTime.now());
     return map[key]?.length ?? 0;
   }
 }

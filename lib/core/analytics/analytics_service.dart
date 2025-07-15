@@ -60,7 +60,7 @@ class AnalyticsService extends ChangeNotifier {
     final last7Totals = List<int>.filled(7, 0);
 
     final fmt = DateFormat('yyyy-MM-dd');
-    final today = DateTime.now().toUtc();
+    final today = DateTime.now();
     final start7 = today.subtract(const Duration(days: 6));
     final start30 = today.subtract(const Duration(days: 29));
 
@@ -73,7 +73,7 @@ class AnalyticsService extends ChangeNotifier {
       var count30 = 0;
 
       for (final entry in map.entries) {
-        final day = fmt.parseUtc(entry.key);
+        final day = fmt.parse(entry.key);
         if (!day.isBefore(start7)) {
           unique7.add(entry.key);
           final index = day.difference(start7).inDays;

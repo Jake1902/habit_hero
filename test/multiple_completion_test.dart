@@ -31,7 +31,7 @@ void main() {
     expect(await repo.todayCount(habit.id), 2);
 
     final map = await repo.getCompletionMap(habit.id);
-    final key = DateFormat('yyyy-MM-dd').format(DateTime.now().toUtc());
+    final key = DateFormat('yyyy-MM-dd').format(DateTime.now());
     expect(map[key], 2);
   });
 }

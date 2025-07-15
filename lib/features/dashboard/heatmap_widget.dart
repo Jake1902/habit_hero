@@ -60,7 +60,7 @@ class HabitHeatmap extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final today = DateTime.now().toUtc();
+    final today = DateTime.now();
     final start = DateTime(today.year, today.month, today.day)
         .subtract(Duration(days: days - 1));
     final weekCount = (days / 7).ceil();
@@ -72,7 +72,7 @@ class HabitHeatmap extends StatelessWidget {
         final index = w * 7 + d;
         if (index >= days) break;
         final date = start.add(Duration(days: index));
-        final keyDate = DateTime(date.year, date.month, date.day).toUtc();
+        final keyDate = DateTime(date.year, date.month, date.day);
         final key =
             '${keyDate.year.toString().padLeft(4, '0')}-${keyDate.month.toString().padLeft(2, '0')}-${keyDate.day.toString().padLeft(2, '0')}';
         final count = dailyCounts[key] ?? 0;
