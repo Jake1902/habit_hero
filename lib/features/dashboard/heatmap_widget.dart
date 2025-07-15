@@ -36,9 +36,6 @@ class HabitHeatmap extends StatelessWidget {
   /// Returns a color ranging from a light variant of [tileColor] to the full
   /// color based on [count].
   Color _colorForCount(int count, int maxCount) {
-    if (count == 0) {
-      return tileColor.withOpacity(0.2);
-    }
     final t = maxCount == 0 ? 1.0 : count / maxCount;
     return Color.lerp(tileColor.withOpacity(0.5), tileColor, t)!;
   }
@@ -62,7 +59,7 @@ class HabitHeatmap extends StatelessWidget {
         final key = DateTime(date.year, date.month, date.day);
         final count = completionData[key] ?? 0;
         final color =
-            count > 0 ? _colorForCount(count, maxCount) : tileColor.withOpacity(0.1);
+            count > 0 ? _colorForCount(count, maxCount) : const Color(0xFF1E1E1E);
         final message = '${key.toIso8601String().split('T').first}: $count';
         squares.add(GestureDetector(
           onTap: () {

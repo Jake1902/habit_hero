@@ -204,7 +204,7 @@ class _AddEditHabitScreenState extends State<AddEditHabitScreen> {
     } else {
       await notificationService.cancelHabitReminders(habit.id);
     }
-    if (mounted) context.go('/home');
+    if (mounted) context.pop(true);
   }
 
   @override
