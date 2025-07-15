@@ -4,8 +4,6 @@ import 'package:go_router/go_router.dart';
 import '../../core/data/habit_repository.dart';
 import '../../core/data/models/habit.dart';
 import '../../core/streak/streak_service.dart';
-import '../../core/data/models/badge.dart';
-import '../dashboard/heatmap_widget.dart';
 import 'package:get_it/get_it.dart';
 import 'dart:math';
 import '../habits/habit_item_widget.dart';
@@ -193,52 +191,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 final data =
                     _completionData.putIfAbsent(habit.id, _generateMockCompletion);
 
-                return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Container(
-                            width: 32,
-                            height: 32,
-                            decoration: BoxDecoration(
-                              color: const Color(0xFF1E1E1E),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Icon(
-                              IconData(habit.iconData, fontFamily: 'MaterialIcons'),
-                              color: Colors.white,
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: Text(
-                              habit.name,
-                              style: const TextStyle(
-                                  color: Colors.white, fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                          Checkbox(
-                            value: _completedToday(habit.id),
-                            onChanged: (v) => _toggleToday(habit.id, v),
-                            activeColor: Color(habit.color),
-                          )
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-                      HabitHeatmap(
-                        completionData: data,
-                        icon: IconData(habit.iconData, fontFamily: 'MaterialIcons'),
-                        name: habit.name,
-                        tileColor: Color(habit.color),
-                        showHeader: false,
-                      ),
-                      const Divider(color: Colors.white24),
-                    ],
-                  ),
-
                 final current = _currentStreaks[habit.id];
                 final longest = _longestStreaks[habit.id];
                 return HabitItemWidget(
@@ -248,7 +200,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   onToggle: (v) => _toggleToday(habit.id, v),
                   currentStreak: current,
                   longestStreak: longest,
-
+                  onEdit: () => _editHabit(habit),
                 );
               },
             ),
