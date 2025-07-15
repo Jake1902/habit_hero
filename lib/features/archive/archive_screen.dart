@@ -3,6 +3,7 @@ import '../../core/data/habit_repository.dart';
 import '../../core/data/models/habit.dart';
 import 'package:get_it/get_it.dart';
 import '../../core/services/notification_service.dart';
+import '../../core/constants/icon_mapping.dart';
 
 class ArchiveScreen extends StatefulWidget {
   const ArchiveScreen({super.key});
@@ -75,8 +76,7 @@ class _ArchiveScreenState extends State<ArchiveScreen> {
               itemCount: habits.length,
               itemBuilder: (context, index) {
                 final habit = habits[index];
-                final icon =
-                    IconData(habit.iconData, fontFamily: 'MaterialIcons');
+                final icon = iconFromCodePoint(habit.iconData);
                 return ListTile(
                   leading: Icon(icon, color: scheme.onBackground),
                   title: Text(habit.name,

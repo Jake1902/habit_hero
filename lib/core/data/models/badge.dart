@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import '../../constants/icon_mapping.dart';
 
 /// Model representing an achievement badge.
 class Badge {
@@ -27,7 +28,7 @@ class Badge {
   factory Badge.fromMap(Map<String, dynamic> map) => Badge(
         id: map['id'] as String,
         title: map['title'] as String,
-        icon: IconData(map['icon'] as int, fontFamily: 'MaterialIcons'),
+        icon: iconFromCodePoint(map['icon'] as int),
         awardedAt: DateTime.parse(map['awardedAt'] as String),
       );
 

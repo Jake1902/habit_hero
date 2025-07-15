@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/data/models/habit.dart';
 import '../dashboard/heatmap_widget.dart';
+import '../../core/constants/icon_mapping.dart';
 
 /// List item widget displaying a habit with its current streak.
 class HabitItemWidget extends StatelessWidget {
@@ -51,7 +52,7 @@ class HabitItemWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
-    final icon = IconData(habit.iconData, fontFamily: 'MaterialIcons');
+    final icon = iconFromCodePoint(habit.iconData);
     final showBadge = currentStreak != null &&
         (currentStreak == 7 || currentStreak == 30 || currentStreak == 100);
 
