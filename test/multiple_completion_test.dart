@@ -14,7 +14,12 @@ void main() {
 
   test('increment and decrement today count', () async {
     final repo = CompletionRepository();
-    final habit = Habit(id: 'h1', name: 'Water', completionTarget: 8);
+    final habit = Habit(
+      id: 'h1',
+      name: 'Water',
+      completionTarget: 8,
+      isMultiple: true,
+    );
     await HabitRepository.addHabit(habit);
 
     await repo.incrementToday(habit.id);

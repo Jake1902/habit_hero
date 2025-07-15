@@ -17,12 +17,14 @@ class _ExportImportScreenState extends State<ExportImportScreen> {
   final ExportImportService _service = GetIt.I<ExportImportService>();
 
   Future<void> _exportJson() async {
+    final path = await FilePicker.platform.getDirectoryPath();
+    if (path == null) return;
     final messenger = ScaffoldMessenger.of(context);
     messenger
       ..hideCurrentSnackBar()
       ..showSnackBar(const SnackBar(content: Text('Exporting...')));
     try {
-      final file = await _service.exportToJson();
+      final file = await _service.exportToJson(Directory(path));
       messenger
         ..hideCurrentSnackBar()
         ..showSnackBar(SnackBar(content: Text('Export saved to ${file.path}')));
@@ -34,12 +36,14 @@ class _ExportImportScreenState extends State<ExportImportScreen> {
   }
 
   Future<void> _exportCsv() async {
+    final path = await FilePicker.platform.getDirectoryPath();
+    if (path == null) return;
     final messenger = ScaffoldMessenger.of(context);
     messenger
       ..hideCurrentSnackBar()
       ..showSnackBar(const SnackBar(content: Text('Exporting...')));
     try {
-      final file = await _service.exportToCsv();
+      final file = await _service.exportToCsv(Directory(path));
       messenger
         ..hideCurrentSnackBar()
         ..showSnackBar(SnackBar(content: Text('Export saved to ${file.path}')));
