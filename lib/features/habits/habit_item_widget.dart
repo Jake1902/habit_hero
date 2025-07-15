@@ -9,8 +9,9 @@ class HabitItemWidget extends StatelessWidget {
     super.key,
     required this.habit,
     required this.completionMap,
-    required this.completedToday,
-    required this.onToggle,
+    required this.todayCount,
+    required this.onIncrement,
+    required this.onDecrement,
     required this.onDayTapped,
     this.onEdit,
     this.onLongPress,
@@ -22,13 +23,13 @@ class HabitItemWidget extends StatelessWidget {
   final Habit habit;
 
   /// Map of completion counts per day used for the heatmap.
-  final Map<DateTime, int> completionMap;
+  final Map<String, int> completionMap;
 
-  /// Whether the habit is completed today.
-  final bool completedToday;
+  /// Today's completion count.
+  final int todayCount;
 
-  /// Callback when today's completion state changes.
-  final ValueChanged<bool?> onToggle;
+  final VoidCallback onIncrement;
+  final VoidCallback onDecrement;
 
   /// Callback when the habit should be edited.
   final VoidCallback? onEdit;
@@ -112,10 +113,22 @@ class HabitItemWidget extends StatelessWidget {
                     const SizedBox(width: 8),
                   ],
                 ),
-              Checkbox(
-                value: completedToday,
-                onChanged: onToggle,
-                activeColor: purple,
+              Row(
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.remove, color: Colors.white),
+                    onPressed: todayCount > 0 ? onDecrement : null,
+                  ),
+                  Text(
+                    '$todayCount',
+                    style:
+                        const TextStyle(color: Colors.white, fontSize: 16),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.add, color: Colors.white),
+                    onPressed: onIncrement,
+                  ),
+                ],
               ),
               if (onEdit != null)
                 IconButton(
@@ -126,10 +139,12 @@ class HabitItemWidget extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           HabitHeatmap(
-            completionMap: completionMap,
+            dailyCounts: completionMap,
             icon: icon,
             name: habit.name,
             fillColor: Color(habit.color),
+            completionTarget: habit.completionTarget,
+            trackingType: habit.completionTrackingType,
             showHeader: false,
             onDayTapped: onDayTapped,
           ),

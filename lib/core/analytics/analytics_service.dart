@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import '../data/habit_repository.dart';
 import '../data/completion_repository.dart';
 import '../streak/streak_service.dart';
+import '../data/models/habit.dart';
+import 'package:intl/intl.dart';
 
 /// Overall analytics statistics for all habits.
 class OverallStats {
@@ -57,39 +59,38 @@ class AnalyticsService extends ChangeNotifier {
     final perHabit = <String, HabitStats>{};
     final last7Totals = List<int>.filled(7, 0);
 
-    final today = DateTime.now();
-    final start7 = DateTime(today.year, today.month, today.day)
-        .subtract(const Duration(days: 6));
-    final start30 = DateTime(today.year, today.month, today.day)
-        .subtract(const Duration(days: 29));
+    final fmt = DateFormat('yyyy-MM-dd');
+    final today = DateTime.now().toUtc();
+    final start7 = today.subtract(const Duration(days: 6));
+    final start30 = today.subtract(const Duration(days: 29));
 
     for (final habit in habits) {
-      final dates = await _completionRepo.getCompletionDates(habit.id);
-      totalCompletions += dates.length;
+      final map = await _completionRepo.getCompletionMap(habit.id);
+      totalCompletions += map.values.fold(0, (a, b) => a + b);
 
-      final unique7 = <DateTime>{};
-      final unique30 = <DateTime>{};
+      final unique7 = <String>{};
+      final unique30 = <String>{};
       var count30 = 0;
 
-      for (final d in dates) {
-        final day = DateTime(d.year, d.month, d.day);
+      for (final entry in map.entries) {
+        final day = fmt.parseUtc(entry.key);
         if (!day.isBefore(start7)) {
-          unique7.add(day);
+          unique7.add(entry.key);
           final index = day.difference(start7).inDays;
           if (index >= 0 && index < 7) {
-            last7Totals[index] += 1;
+            last7Totals[index] += entry.value;
           }
         }
         if (!day.isBefore(start30)) {
-          unique30.add(day);
-          count30++;
+          unique30.add(entry.key);
+          count30 += entry.value;
         }
       }
 
       sevenDayCompletions += unique7.length;
 
-      final currentStreak = await streakService.getCurrentStreak(habit.id);
-      final longest = await streakService.getLongestStreak(habit.id);
+      final currentStreak = await streakService.getCurrentStreak(habit);
+      final longest = await streakService.getLongestStreak(habit);
       if (longest > longestStreak) longestStreak = longest;
 
       perHabit[habit.id] = HabitStats(

@@ -50,7 +50,7 @@ class ExportImportService {
     for (final h in habits) {
       final map = await _completionRepo.getCompletionMap(h.id);
       for (final entry in map.entries) {
-        final dateStr = entry.key.toIso8601String().split('T').first;
+        final dateStr = entry.key;
         rows.add([h.id, h.name, dateStr, entry.value]);
       }
     }
