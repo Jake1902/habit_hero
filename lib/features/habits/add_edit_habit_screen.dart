@@ -49,6 +49,38 @@ class _AddEditHabitScreenState extends State<AddEditHabitScreen> {
     'Evening',
   ];
 
+  static const List<Color> _colorOptions = [
+    Colors.pink,
+    Colors.red,
+    Colors.deepOrange,
+    Colors.orange,
+    Colors.amber,
+    Colors.yellow,
+    Colors.lightGreen,
+    Colors.green,
+    Colors.teal,
+    Colors.cyan,
+    Colors.lightBlue,
+    Colors.blue,
+    Colors.indigo,
+    Colors.deepPurple,
+    Colors.purple,
+    Colors.brown,
+    Colors.grey,
+    Colors.blueGrey,
+    Color(0xFFB39DDB),
+    Color(0xFF80CBC4),
+    Color(0xFFFFAB91),
+    Color(0xFFE6EE9C),
+    Color(0xFFCE93D8),
+    Color(0xFFA5D6A7),
+    Color(0xFFFFF59D),
+    Color(0xFFB0BEC5),
+    Color(0xFF90A4AE),
+    Color(0xFFE0E0E0),
+    Color(0xFF4DB6AC),
+  ];
+
   bool get _isEditing => widget.habit != null;
 
   @override
@@ -155,7 +187,7 @@ class _AddEditHabitScreenState extends State<AddEditHabitScreen> {
     } else {
       await HabitRepository.addHabit(habit);
     }
-    if (mounted) context.pop();
+    if (mounted) context.go('/home');
   }
 
   @override
@@ -169,11 +201,11 @@ class _AddEditHabitScreenState extends State<AddEditHabitScreen> {
             icon: const Icon(Icons.close, size: 24),
             onPressed: () => context.pop(),
           ),
-          title: Text(
-            _isEditing ? 'Edit Habit' : 'New Habit',
-            style: const TextStyle(fontWeight: FontWeight.bold),
+          title: const Text(
+            'New Habit',
+            style: TextStyle(fontWeight: FontWeight.bold),
           ),
-          centerTitle: true,
+          centerTitle: false,
           backgroundColor: Colors.transparent,
         ),
         body: SingleChildScrollView(
@@ -181,6 +213,20 @@ class _AddEditHabitScreenState extends State<AddEditHabitScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              Center(
+                child: Container(
+                  width: 80,
+                  height: 80,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF1A1A1A),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Icon(_icon, color: Color(_color), size: 40),
+                ),
+              ),
+              const SizedBox(height: 12),
+              const Text('Name'),
+              const SizedBox(height: 4),
               TextField(
                 controller: _nameController,
                 style: const TextStyle(
@@ -191,40 +237,36 @@ class _AddEditHabitScreenState extends State<AddEditHabitScreen> {
                 onChanged: (_) => setState(() {}),
               ),
               const SizedBox(height: 12),
+              const Text('Description'),
+              const SizedBox(height: 4),
               TextField(
                 controller: _descriptionController,
                 style: const TextStyle(color: Colors.white70),
                 decoration: const InputDecoration(hintText: 'Description'),
               ),
               const SizedBox(height: 12),
-              Row(
+              Wrap(
+                spacing: 12,
+                runSpacing: 12,
                 children: [
-                  GestureDetector(
-                    onTap: _pickIcon,
-                    child: Container(
-                      width: 48,
-                      height: 48,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF1A1A1A),
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: const Color(0xFF2A2A2A)),
-                      ),
-                      child: Icon(_icon, color: Color(_color)),
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  GestureDetector(
-                    onTap: _pickColor,
-                    child: Container(
-                      width: 48,
-                      height: 48,
-                      decoration: BoxDecoration(
-                        color: Color(_color),
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: const Color(0xFF2A2A2A)),
+                  for (final color in _colorOptions)
+                    GestureDetector(
+                      onTap: () => setState(() => _color = color.value),
+                      child: Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: color,
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: _color == color.value
+                                ? const Color(0xFF8A2BE2)
+                                : Colors.transparent,
+                            width: 3,
+                          ),
+                        ),
                       ),
                     ),
-                  ),
                 ],
               ),
               const SizedBox(height: 12),
@@ -285,6 +327,11 @@ class _AddEditHabitScreenState extends State<AddEditHabitScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        ListTile(
+          title: const Text('Icon'),
+          trailing: Icon(_icon, color: Color(_color)),
+          onTap: _pickIcon,
+        ),
         ListTile(
           title: const Text('Streak Goal'),
           subtitle: Text(_streakGoal.name),
