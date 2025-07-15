@@ -15,6 +15,7 @@ import '../features/export_import/export_import_screen.dart';
 
 import '../features/settings/theme_screen.dart';
 import '../features/analytics/analytics_screen.dart';
+import '../features/templates/template_gallery_screen.dart';
 
 import '../core/data/models/habit.dart';
 
@@ -95,6 +96,11 @@ GoRouter createRouter(bool onboardingComplete, GlobalKey<NavigatorState> key) {
         path: '/analytics',
         name: 'analytics',
         builder: (_, __) => const AnalyticsScreen(),
+      ),
+      GoRoute(
+        path: '/templates',
+        name: 'templates',
+        builder: (_, __) => const TemplateGalleryScreen(),
       ),
     ],
   );

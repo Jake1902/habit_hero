@@ -9,6 +9,7 @@ import 'streak_goal_screen.dart';
 import 'package:get_it/get_it.dart';
 import '../../core/services/notification_service.dart';
 import '../../core/services/notification_permission_service.dart';
+import '../../core/data/models/habit_template.dart';
 
 /// Screen for creating or editing a habit.
 class AddEditHabitScreen extends StatefulWidget {
@@ -152,7 +153,6 @@ class _AddEditHabitScreenState extends State<AddEditHabitScreen> {
     }
   }
 
-
   /// Navigates to the category creation screen and adds a new category.
   Future<void> _createCategory() async {
     final result = await context.push<String>('/create_category');
@@ -242,6 +242,30 @@ class _AddEditHabitScreenState extends State<AddEditHabitScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              ElevatedButton.icon(
+                icon: const Icon(Icons.view_module),
+                label: const Text('Browse templates'),
+                onPressed: () async {
+                  final tpl = await context.push<HabitTemplate>('/templates');
+                  if (tpl != null) {
+                    setState(() {
+                      _nameController.text = tpl.name;
+                      _descriptionController.text = tpl.description;
+                      _icon =
+                          IconData(tpl.iconData, fontFamily: 'MaterialIcons');
+                      _color = tpl.color;
+                      _reminderTime = tpl.reminderTime;
+                      _reminderWeekdays = tpl.reminderWeekdays;
+                      _trackingType =
+                          tpl.completionTrackingType == 'customValue'
+                              ? CompletionTrackingType.customValue
+                              : CompletionTrackingType.stepByStep;
+                      _completionTarget = tpl.completionTarget;
+                    });
+                  }
+                },
+              ),
+              const SizedBox(height: 12),
               Center(
                 child: Container(
                   width: 80,
@@ -414,8 +438,7 @@ class _AddEditHabitScreenState extends State<AddEditHabitScreen> {
             Expanded(
               child: ChoiceChip(
                 label: const Text('Step By Step'),
-                selected: _trackingType ==
-                    CompletionTrackingType.stepByStep,
+                selected: _trackingType == CompletionTrackingType.stepByStep,
                 onSelected: (_) => setState(
                     () => _trackingType = CompletionTrackingType.stepByStep),
               ),
@@ -424,8 +447,7 @@ class _AddEditHabitScreenState extends State<AddEditHabitScreen> {
             Expanded(
               child: ChoiceChip(
                 label: const Text('Custom Value'),
-                selected:
-                    _trackingType == CompletionTrackingType.customValue,
+                selected: _trackingType == CompletionTrackingType.customValue,
                 onSelected: (_) => setState(
                     () => _trackingType = CompletionTrackingType.customValue),
               ),
@@ -450,8 +472,7 @@ class _AddEditHabitScreenState extends State<AddEditHabitScreen> {
               ),
               IconButton(
                 icon: const Icon(Icons.add),
-                onPressed: () =>
-                    setState(() => _completionTarget++),
+                onPressed: () => setState(() => _completionTarget++),
               ),
             ],
           ),
@@ -471,7 +492,6 @@ class _AddEditHabitScreenState extends State<AddEditHabitScreen> {
       ],
     );
   }
-
 }
 
 /// Simple icon picker with a searchable grid.
@@ -500,9 +520,7 @@ class _IconPickerState extends State<_IconPicker> {
     final query = _searchController.text.toLowerCase();
     setState(() {
       _icons = _allIcons
-          .where((e) => e.codePoint
-              .toString()
-              .contains(query))
+          .where((e) => e.codePoint.toString().contains(query))
           .toList();
     });
   }

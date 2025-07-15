@@ -1,0 +1,11 @@
+{
+  "id": "tpl_miracle_morning",
+  "name": "Miracle Morning",
+  "description": "Wake up early and follow the SAVERS routine.",
+  "iconData": 0xe038,
+  "color": 0xFF8A2BE2,
+  "reminderTime": {"hour": 6, "minute": 0},
+  "reminderWeekdays": [1,2,3,4,5],
+  "completionTrackingType": "stepByStep",
+  "completionTarget": 1
+}
