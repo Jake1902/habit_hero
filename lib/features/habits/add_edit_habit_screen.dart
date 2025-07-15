@@ -105,6 +105,9 @@ class _AddEditHabitScreenState extends State<AddEditHabitScreen> {
       _categories = List.of(habit.categories);
       _trackingType = habit.completionTrackingType;
       _completionTarget = habit.completionTarget;
+    } else {
+      _trackingType = CompletionTrackingType.stepByStep;
+      _completionTarget = 1;
     }
   }
 
