@@ -2,6 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'features/onboarding/onboarding_screen.dart';
 import 'features/home/home_screen.dart';
+import 'features/habits/add_edit_habit_screen.dart';
+import 'features/habits/category_creation_screen.dart';
+import 'features/habits/streak_goal_screen.dart';
+import 'features/habits/reminder_screen.dart';
+import 'core/data/models/habit.dart';
 
 /// Root app widget
 class App extends StatelessWidget {
@@ -20,6 +25,22 @@ class App extends StatelessWidget {
         GoRoute(
           path: '/home',
           builder: (context, state) => const HomeScreen(),
+        ),
+        GoRoute(
+          path: '/add_habit',
+          builder: (context, state) => AddEditHabitScreen(habit: state.extra as Habit?),
+        ),
+        GoRoute(
+          path: '/create_category',
+          builder: (context, state) => const CategoryCreationScreen(),
+        ),
+        GoRoute(
+          path: '/streak_goal',
+          builder: (context, state) => StreakGoalScreen(current: state.extra as StreakGoal?),
+        ),
+        GoRoute(
+          path: '/reminder',
+          builder: (context, state) => ReminderScreen(current: state.extra as List<int>?),
         ),
       ],
     );
