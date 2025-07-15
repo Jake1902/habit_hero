@@ -22,15 +22,22 @@ class ExportImportService {
     return '${now.year}${two(now.month)}${two(now.day)}_${two(now.hour)}${two(now.minute)}${two(now.second)}';
   }
 
+  Future<Directory> _documentsDir() async {
+    try {
+      return await getApplicationDocumentsDirectory();
+    } catch (_) {
+      return Directory.systemTemp;
+    }
+  }
+
   /// Export all habits and completions to a JSON file.
   Future<File> exportToJson() async {
-    final dir = await getApplicationDocumentsDirectory();
+    final dir = await _documentsDir();
     final habits = await HabitRepository.loadHabits();
     final completionData = <String, List<String>>{};
     for (final h in habits) {
       final dates = await _completionRepo.getCompletionDates(h.id);
-      completionData[h.id] =
-          dates.map((d) => d.toIso8601String()).toList();
+      completionData[h.id] = dates.map((d) => d.toIso8601String()).toList();
     }
     final data = {
       'habits': habits.map((h) => h.toMap()).toList(),
@@ -42,7 +49,7 @@ class ExportImportService {
 
   /// Export all habits and completions to a CSV file.
   Future<File> exportToCsv() async {
-    final dir = await getApplicationDocumentsDirectory();
+    final dir = await _documentsDir();
     final habits = await HabitRepository.loadHabits();
     final rows = <List<dynamic>>[
       ['habitId', 'habitName', 'date', 'count'],
@@ -77,7 +84,7 @@ class ExportImportService {
       habitMap[habit.id] = habit;
     }
 
-    final completions = (data['completions'] as Map<String, dynamic>? ) ?? {};
+    final completions = (data['completions'] as Map<String, dynamic>?) ?? {};
     for (final entry in completions.entries) {
       final id = entry.key;
       final dates = (entry.value as List<dynamic>)
@@ -85,8 +92,7 @@ class ExportImportService {
           .toList();
       final existingDates = await _completionRepo.getCompletionDates(id);
       final set = <DateTime>{
-        for (final d in existingDates)
-          DateTime(d.year, d.month, d.day),
+        for (final d in existingDates) DateTime(d.year, d.month, d.day),
       };
       for (final d in dates) {
         set.add(DateTime(d.year, d.month, d.day));
@@ -125,8 +131,7 @@ class ExportImportService {
     for (final entry in completionMap.entries) {
       final existingDates = await _completionRepo.getCompletionDates(entry.key);
       final set = <DateTime>{
-        for (final d in existingDates)
-          DateTime(d.year, d.month, d.day),
+        for (final d in existingDates) DateTime(d.year, d.month, d.day),
         ...entry.value,
       };
       final sorted = set.toList()..sort();

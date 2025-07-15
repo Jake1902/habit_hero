@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:get_it/get_it.dart';
 
@@ -18,12 +17,7 @@ void main() {
 
   testWidgets('template fills add habit form', (tester) async {
     final router = createRouter(true, GlobalKey<NavigatorState>());
-    await tester.pumpWidget(
-      Provider<TemplateService>.value(
-        value: getIt<TemplateService>(),
-        child: MaterialApp.router(routerConfig: router),
-      ),
-    );
+    await tester.pumpWidget(MaterialApp.router(routerConfig: router));
 
     router.go('/add_habit');
     await tester.pumpAndSettle();
