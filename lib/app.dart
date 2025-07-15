@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'onboarding_screen.dart';
+import 'features/home/home_screen.dart';
 
 /// Root app widget
 class App extends StatelessWidget {
@@ -20,14 +21,3 @@ class App extends StatelessWidget {
   }
 }
 
-/// Placeholder home screen used in the routes map
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(child: Text('Home Screen')),
-    );
-  }
-}
