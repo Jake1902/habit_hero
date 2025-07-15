@@ -11,6 +11,7 @@ class HabitItemWidget extends StatelessWidget {
     required this.completionData,
     required this.completedToday,
     required this.onToggle,
+    this.onEdit,
     this.currentStreak,
     this.longestStreak,
   });
@@ -26,6 +27,9 @@ class HabitItemWidget extends StatelessWidget {
 
   /// Callback when today's completion state changes.
   final ValueChanged<bool?> onToggle;
+
+  /// Callback when the habit should be edited.
+  final VoidCallback? onEdit;
 
   /// Current streak count.
   final int? currentStreak;
@@ -101,6 +105,11 @@ class HabitItemWidget extends StatelessWidget {
                 onChanged: onToggle,
                 activeColor: purple,
               ),
+              if (onEdit != null)
+                IconButton(
+                  icon: const Icon(Icons.edit, color: Colors.white, size: 20),
+                  onPressed: onEdit,
+                ),
             ],
           ),
           const SizedBox(height: 8),
@@ -108,6 +117,7 @@ class HabitItemWidget extends StatelessWidget {
             completionData: completionData,
             icon: icon,
             name: habit.name,
+            tileColor: Color(habit.color),
             showHeader: false,
           ),
           const Divider(color: Colors.white24),
