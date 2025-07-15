@@ -87,6 +87,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _showHabitOptions(Habit habit) {
+    final scheme = Theme.of(context).colorScheme;
     showModalBottomSheet<void>(
       context: context,
       backgroundColor: Theme.of(context).colorScheme.surfaceVariant,

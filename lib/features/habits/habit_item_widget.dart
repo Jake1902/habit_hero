@@ -121,29 +121,13 @@ class HabitItemWidget extends StatelessWidget {
               Row(
                 children: [
                   IconButton(
-
-                    icon: Icon(Icons.remove,
-                        color: Theme.of(context).colorScheme.onBackground),
-                    onPressed: todayCount > 0 ? onDecrement : null,
-                  ),
-                  Text(
-                    '$todayCount',
-                    style: TextStyle(
-                        color: Theme.of(context).colorScheme.onBackground,
-                        fontSize: 16),
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.add,
-                        color: Theme.of(context).colorScheme.onBackground),
-                    onPressed: onIncrement,
-
                     icon: Icon(
                       habit.isMultiple
                           ? Icons.check_box
                           : (todayCount > 0
                               ? Icons.check_box
                               : Icons.check_box_outline_blank),
-                      color: Colors.white,
+                      color: Theme.of(context).colorScheme.onBackground,
                     ),
                     onPressed: () {
                       if (habit.isMultiple) {
@@ -156,13 +140,13 @@ class HabitItemWidget extends StatelessWidget {
                         }
                       }
                     },
-
                   ),
                   if (habit.isMultiple)
                     Text(
                       '$todayCount',
-                      style:
-                          const TextStyle(color: Colors.white, fontSize: 16),
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.onBackground,
+                          fontSize: 16),
                     ),
                 ],
               ),

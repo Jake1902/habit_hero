@@ -18,14 +18,14 @@ class AnalyticsQuickRow extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        _chip('Today', '$todayCount / $totalHabits'),
-        _chip('7-Day', '${overall.sevenDaySuccessRate.toStringAsFixed(0)} %'),
-        _chip('Longest Streak', '${overall.longestStreak} days'),
+        _chip(context, 'Today', '$todayCount / $totalHabits'),
+        _chip(context, '7-Day', '${overall.sevenDaySuccessRate.toStringAsFixed(0)} %'),
+        _chip(context, 'Longest Streak', '${overall.longestStreak} days'),
       ],
     );
   }
 
-  Widget _chip(String label, String value) {
+  Widget _chip(BuildContext context, String label, String value) {
     final scheme = Theme.of(context).colorScheme;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
