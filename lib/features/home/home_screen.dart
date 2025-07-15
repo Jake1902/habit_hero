@@ -181,9 +181,17 @@ class _HomeScreenState extends State<HomeScreen> {
                     children: [
                       Row(
                         children: [
-                          Icon(
-                            IconData(habit.iconData, fontFamily: 'MaterialIcons'),
-                            color: Color(habit.color),
+                          Container(
+                            width: 32,
+                            height: 32,
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF1E1E1E),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Icon(
+                              IconData(habit.iconData, fontFamily: 'MaterialIcons'),
+                              color: Colors.white,
+                            ),
                           ),
                           const SizedBox(width: 8),
                           Expanded(
@@ -196,7 +204,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           Checkbox(
                             value: _completedToday(habit.id),
                             onChanged: (v) => _toggleToday(habit.id, v),
-                            activeColor: purple,
+                            activeColor: Color(habit.color),
                           )
                         ],
                       ),
@@ -205,6 +213,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         completionData: data,
                         icon: IconData(habit.iconData, fontFamily: 'MaterialIcons'),
                         name: habit.name,
+                        tileColor: Color(habit.color),
                         showHeader: false,
                       ),
                       const Divider(color: Colors.white24),

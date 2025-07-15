@@ -14,6 +14,9 @@ class HabitHeatmap extends StatelessWidget {
   /// Name of the habit.
   final String name;
 
+  /// Base color used for completion tiles.
+  final Color tileColor;
+
   /// Number of days to show, defaults to 90.
   final int days;
 
@@ -25,18 +28,19 @@ class HabitHeatmap extends StatelessWidget {
     required this.completionData,
     required this.icon,
     required this.name,
+    required this.tileColor,
     this.days = 90,
     this.showHeader = true,
   });
 
-  /// Returns a color from light to deep purple based on [count].
+  /// Returns a color ranging from a light variant of [tileColor] to the full
+  /// color based on [count].
   Color _colorForCount(int count, int maxCount) {
-    final t = maxCount == 0 ? 0.0 : count / maxCount;
-    return Color.lerp(
-      Colors.deepPurple.shade200,
-      Colors.deepPurple.shade900,
-      t,
-    )!;
+    if (count == 0) {
+      return tileColor.withOpacity(0.2);
+    }
+    final t = maxCount == 0 ? 1.0 : count / maxCount;
+    return Color.lerp(tileColor.withOpacity(0.5), tileColor, t)!;
   }
 
   @override
@@ -58,7 +62,7 @@ class HabitHeatmap extends StatelessWidget {
         final key = DateTime(date.year, date.month, date.day);
         final count = completionData[key] ?? 0;
         final color =
-            count > 0 ? _colorForCount(count, maxCount) : Colors.deepPurple.shade50;
+            count > 0 ? _colorForCount(count, maxCount) : tileColor.withOpacity(0.1);
         final message = '${key.toIso8601String().split('T').first}: $count';
         squares.add(GestureDetector(
           onTap: () {

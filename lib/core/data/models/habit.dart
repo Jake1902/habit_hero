@@ -30,7 +30,8 @@ class Habit {
   /// Optional description text.
   String description;
 
-  /// ARGB color value for the habit.
+  /// ARGB color value used for progress tiles on the home screen heatmap and
+  /// completion squares. Does not affect the icon color.
   int color;
 
   /// CodePoint for the [IconData] used to display the habit.
