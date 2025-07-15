@@ -25,6 +25,9 @@ class TemplateGalleryScreen extends StatelessWidget {
       body: FutureBuilder<List<HabitTemplate>>(
         future: templateService.loadTemplates(),
         builder: (ctx, snapshot) {
+          if (snapshot.hasError) {
+            return const Center(child: Text('Failed to load templates'));
+          }
           if (!snapshot.hasData) {
             return const Center(child: CircularProgressIndicator());
           }

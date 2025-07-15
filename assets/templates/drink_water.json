@@ -2,8 +2,8 @@
   "id": "tpl_drink_water",
   "name": "Drink 8 Glasses",
   "description": "Stay hydrated by drinking 8 glasses of water.",
-  "iconData": 0xe0f0,
-  "color": 0xFF0097A7,
+  "iconData": 57584,
+  "color": 4278228903,
   "completionTrackingType": "customValue",
   "completionTarget": 8
 }
