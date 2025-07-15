@@ -22,6 +22,7 @@ class Habit {
     this.categories = const [],
     this.completionTrackingType = CompletionTrackingType.stepByStep,
     this.completionTarget = 1,
+    this.isMultiple = false,
   });
 
   /// Unique identifier for the habit.
@@ -63,6 +64,9 @@ class Habit {
   /// Target value per day when using [CompletionTrackingType.customValue].
   int completionTarget;
 
+  /// Whether this habit can be completed multiple times per day.
+  bool isMultiple;
+
   /// Serializes this habit to a map.
   Map<String, dynamic> toMap() => {
         'id': id,
@@ -81,6 +85,7 @@ class Habit {
         'categories': categories,
         'completionTrackingType': completionTrackingType.index,
         'completionTarget': completionTarget,
+        'isMultiple': isMultiple,
       };
 
   /// Converts this habit to JSON.
@@ -107,6 +112,7 @@ class Habit {
         completionTrackingType: CompletionTrackingType
             .values[map['completionTrackingType'] as int? ?? 0],
         completionTarget: map['completionTarget'] as int? ?? 1,
+        isMultiple: map['isMultiple'] as bool? ?? false,
       );
 
   /// Creates a habit from JSON string.
@@ -127,6 +133,7 @@ class Habit {
     List<String>? categories,
     CompletionTrackingType? completionTrackingType,
     int? completionTarget,
+    bool? isMultiple,
   }) =>
       Habit(
         id: id ?? this.id,
@@ -142,5 +149,6 @@ class Habit {
         completionTrackingType:
             completionTrackingType ?? this.completionTrackingType,
         completionTarget: completionTarget ?? this.completionTarget,
+        isMultiple: isMultiple ?? this.isMultiple,
       );
 }

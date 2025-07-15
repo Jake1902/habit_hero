@@ -116,18 +116,32 @@ class HabitItemWidget extends StatelessWidget {
               Row(
                 children: [
                   IconButton(
-                    icon: const Icon(Icons.remove, color: Colors.white),
-                    onPressed: todayCount > 0 ? onDecrement : null,
+                    icon: Icon(
+                      habit.isMultiple
+                          ? Icons.check_box
+                          : (todayCount > 0
+                              ? Icons.check_box
+                              : Icons.check_box_outline_blank),
+                      color: Colors.white,
+                    ),
+                    onPressed: () {
+                      if (habit.isMultiple) {
+                        onIncrement();
+                      } else {
+                        if (todayCount > 0) {
+                          onDecrement();
+                        } else {
+                          onIncrement();
+                        }
+                      }
+                    },
                   ),
-                  Text(
-                    '$todayCount',
-                    style:
-                        const TextStyle(color: Colors.white, fontSize: 16),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.add, color: Colors.white),
-                    onPressed: onIncrement,
-                  ),
+                  if (habit.isMultiple)
+                    Text(
+                      '$todayCount',
+                      style:
+                          const TextStyle(color: Colors.white, fontSize: 16),
+                    ),
                 ],
               ),
               if (onEdit != null)
