@@ -12,6 +12,7 @@ class HabitItemWidget extends StatelessWidget {
     required this.completedToday,
     required this.onToggle,
     this.onEdit,
+    this.onLongPress,
     this.currentStreak,
     this.longestStreak,
   });
@@ -31,6 +32,9 @@ class HabitItemWidget extends StatelessWidget {
   /// Callback when the habit should be edited.
   final VoidCallback? onEdit;
 
+  /// Callback when the item is long pressed.
+  final VoidCallback? onLongPress;
+
   /// Current streak count.
   final int? currentStreak;
 
@@ -44,14 +48,16 @@ class HabitItemWidget extends StatelessWidget {
     final showBadge = currentStreak != null &&
         (currentStreak == 7 || currentStreak == 30 || currentStreak == 100);
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Stack(
+    return InkWell(
+      onLongPress: onLongPress,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Stack(
                 children: [
                   Container(
                     width: 24,

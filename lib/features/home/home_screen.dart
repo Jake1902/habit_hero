@@ -7,6 +7,7 @@ import '../../core/streak/streak_service.dart';
 import 'package:get_it/get_it.dart';
 import 'dart:math';
 import '../habits/habit_item_widget.dart';
+import '../../core/services/notification_service.dart';
 
 /// Home screen shown when the user has completed onboarding.
 ///
@@ -61,6 +62,32 @@ class _HomeScreenState extends State<HomeScreen> {
     if (mounted) {
       _refresh();
     }
+  }
+
+  Future<void> _archiveHabit(Habit habit) async {
+    final notificationService = GetIt.I<NotificationService>();
+    await notificationService.cancelHabitReminders(habit.id);
+    await HabitRepository.archiveHabit(habit.id);
+    if (mounted) {
+      _refresh();
+    }
+  }
+
+  void _showHabitOptions(Habit habit) {
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: const Color(0xFF1E1E1E),
+      builder: (context) => SafeArea(
+        child: ListTile(
+          leading: const Icon(Icons.archive, color: Colors.white),
+          title: const Text('Archive', style: TextStyle(color: Colors.white)),
+          onTap: () {
+            Navigator.pop(context);
+            _archiveHabit(habit);
+          },
+        ),
+      ),
+    );
   }
 
   Map<DateTime, int> _generateMockCompletion() {
@@ -201,6 +228,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   currentStreak: current,
                   longestStreak: longest,
                   onEdit: () => _editHabit(habit),
+                  onLongPress: () => _showHabitOptions(habit),
                 );
               },
             ),
