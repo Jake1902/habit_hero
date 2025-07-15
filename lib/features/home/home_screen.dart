@@ -33,12 +33,18 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  void _goToAddHabit() {
-    context.go('/add_habit');
+  Future<void> _goToAddHabit() async {
+    await context.push('/add_habit');
+    if (mounted) {
+      _refresh();
+    }
   }
 
-  void _editHabit(Habit habit) {
-    context.go('/add_habit', extra: habit);
+  Future<void> _editHabit(Habit habit) async {
+    await context.push('/add_habit', extra: habit);
+    if (mounted) {
+      _refresh();
+    }
   }
 
   Map<DateTime, int> _generateMockCompletion() {
