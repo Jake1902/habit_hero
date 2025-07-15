@@ -5,8 +5,9 @@ import 'package:uuid/uuid.dart';
 import '../../core/data/habit_repository.dart';
 import '../../core/data/models/habit.dart';
 import 'category_creation_screen.dart';
-import 'reminder_screen.dart';
 import 'streak_goal_screen.dart';
+import 'package:get_it/get_it.dart';
+import '../../core/services/notification_service.dart';
 
 /// Screen for creating or editing a habit.
 class AddEditHabitScreen extends StatefulWidget {
@@ -31,7 +32,8 @@ class _AddEditHabitScreenState extends State<AddEditHabitScreen> {
   bool _advancedExpanded = false;
 
   StreakGoal _streakGoal = StreakGoal.none;
-  List<int> _reminderDays = [];
+  TimeOfDay? _reminderTime;
+  List<int> _selectedWeekdays = [];
   List<String> _categories = [];
   CompletionTrackingType _trackingType = CompletionTrackingType.stepByStep;
   int _completionTarget = 1;
@@ -96,7 +98,8 @@ class _AddEditHabitScreenState extends State<AddEditHabitScreen> {
       _icon = IconData(habit.iconData, fontFamily: 'MaterialIcons');
       _color = habit.color;
       _streakGoal = habit.streakGoal;
-      _reminderDays = List.of(habit.reminderDays);
+      _reminderTime = habit.reminderTime;
+      _selectedWeekdays = List.of(habit.reminderWeekdays);
       _categories = List.of(habit.categories);
       _trackingType = habit.completionTrackingType;
       _completionTarget = habit.completionTarget;
@@ -128,6 +131,15 @@ class _AddEditHabitScreenState extends State<AddEditHabitScreen> {
     if (result != null) setState(() => _color = result);
   }
 
+  /// Opens a time picker for selecting the reminder time.
+  Future<void> _pickReminderTime() async {
+    final result = await showTimePicker(
+      context: context,
+      initialTime: _reminderTime ?? TimeOfDay.now(),
+    );
+    if (result != null) setState(() => _reminderTime = result);
+  }
+
   /// Navigates to the streak goal screen.
   Future<void> _editStreakGoal() async {
     final result = await context.push<StreakGoal>(
@@ -139,16 +151,6 @@ class _AddEditHabitScreenState extends State<AddEditHabitScreen> {
     }
   }
 
-  /// Navigates to the reminder screen.
-  Future<void> _editReminders() async {
-    final result = await context.push<List<int>>(
-      '/reminder',
-      extra: _reminderDays,
-    );
-    if (result != null) {
-      setState(() => _reminderDays = result);
-    }
-  }
 
   /// Navigates to the category creation screen and adds a new category.
   Future<void> _createCategory() async {
@@ -179,7 +181,9 @@ class _AddEditHabitScreenState extends State<AddEditHabitScreen> {
       color: _color,
       iconData: _icon.codePoint,
       streakGoal: _streakGoal,
-      reminderDays: _reminderDays,
+      reminderDays: [],
+      reminderTime: _reminderTime,
+      reminderWeekdays: _selectedWeekdays,
       categories: _categories,
       completionTrackingType: _trackingType,
       completionTarget: _completionTarget,
@@ -188,6 +192,17 @@ class _AddEditHabitScreenState extends State<AddEditHabitScreen> {
       await HabitRepository.updateHabit(habit);
     } else {
       await HabitRepository.addHabit(habit);
+    }
+    final notificationService = GetIt.I<NotificationService>();
+    if (habit.reminderTime != null && habit.reminderWeekdays.isNotEmpty) {
+      await notificationService.scheduleHabitReminder(
+        habitId: habit.id,
+        title: habit.name,
+        time: habit.reminderTime!,
+        weekdays: habit.reminderWeekdays,
+      );
+    } else {
+      await notificationService.cancelHabitReminders(habit.id);
     }
     if (mounted) context.go('/home');
   }
@@ -345,14 +360,28 @@ class _AddEditHabitScreenState extends State<AddEditHabitScreen> {
           onTap: _editStreakGoal,
         ),
         ListTile(
-          title: const Text('Reminder'),
-          subtitle: Text(
-            _reminderDays.isEmpty
-                ? 'None'
-                : _reminderDays.map(_weekdayName).join(', '),
-          ),
-          trailing: const Icon(Icons.chevron_right),
-          onTap: _editReminders,
+          title: const Text('Reminder Time'),
+          subtitle: Text(_reminderTime?.format(context) ?? 'None'),
+          onTap: _pickReminderTime,
+        ),
+        Wrap(
+          spacing: 8,
+          children: List.generate(7, (i) {
+            final day = i + 1;
+            final label = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][i];
+            final selected = _selectedWeekdays.contains(day);
+            return ChoiceChip(
+              label: Text(label),
+              selected: selected,
+              onSelected: (on) {
+                setState(() {
+                  on
+                      ? _selectedWeekdays.add(day)
+                      : _selectedWeekdays.remove(day);
+                });
+              },
+            );
+          }),
         ),
         Wrap(
           spacing: 8,
@@ -433,11 +462,6 @@ class _AddEditHabitScreenState extends State<AddEditHabitScreen> {
     );
   }
 
-  /// Returns weekday name for given int (1=Mon).
-  String _weekdayName(int day) {
-    const names = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-    return names[day - 1];
-  }
 }
 
 /// Simple icon picker with a searchable grid.

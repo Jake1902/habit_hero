@@ -38,6 +38,7 @@ dependencies:
   go_router: ^13.2.0
   uuid: ^3.0.7
   get_it: ^7.6.7
+  awesome_notifications: ^0.8.2
 
 dev_dependencies:
   flutter_test:
