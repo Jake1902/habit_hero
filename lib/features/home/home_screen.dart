@@ -4,10 +4,9 @@ import 'package:go_router/go_router.dart';
 import '../../core/data/habit_repository.dart';
 import '../../core/data/models/habit.dart';
 import '../../core/streak/streak_service.dart';
-import '../../core/data/models/badge.dart';
+import '../../core/data/completion_repository.dart';
 import '../dashboard/heatmap_widget.dart';
 import 'package:get_it/get_it.dart';
-import 'dart:math';
 import '../habits/habit_item_widget.dart';
 
 /// Home screen shown when the user has completed onboarding.
@@ -35,11 +34,14 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<List<Habit>> _loadAndCompute() async {
     final habits = await HabitRepository.loadHabits();
     final service = GetIt.I<StreakService>();
+    final completionRepo = GetIt.I<CompletionRepository>();
     for (final habit in habits) {
       final cs = await service.getCurrentStreak(habit.id);
       final ls = await service.getLongestStreak(habit.id);
       _currentStreaks[habit.id] = cs;
       _longestStreaks[habit.id] = ls;
+      _completionData[habit.id] =
+          await completionRepo.getCompletionMap(habit.id);
     }
     return habits;
   }
@@ -65,16 +67,6 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  Map<DateTime, int> _generateMockCompletion() {
-    final map = <DateTime, int>{};
-    final now = DateTime.now();
-    final random = Random();
-    for (var i = 0; i < 90; i++) {
-      final day = DateTime(now.year, now.month, now.day).subtract(Duration(days: i));
-      map[day] = random.nextInt(3); // 0-2 completions
-    }
-    return map;
-  }
 
   bool _completedToday(String id) {
     final today = DateTime.now();
@@ -84,12 +76,13 @@ class _HomeScreenState extends State<HomeScreen> {
     return (data[key] ?? 0) > 0;
   }
 
-  void _toggleToday(String id, bool? value) {
-    final today = DateTime.now();
-    final key = DateTime(today.year, today.month, today.day);
-    final data = _completionData.putIfAbsent(id, _generateMockCompletion);
-    data[key] = (value ?? false) ? 1 : 0;
-    setState(() {});
+  Future<void> _toggleToday(String id) async {
+    final repo = GetIt.I<CompletionRepository>();
+    await repo.toggleCompletion(id, DateTime.now());
+    final updated = await repo.getCompletionMap(id);
+    setState(() {
+      _completionData[id] = updated;
+    });
   }
 
   @override
@@ -190,65 +183,16 @@ class _HomeScreenState extends State<HomeScreen> {
               itemCount: habits.length,
               itemBuilder: (context, index) {
                 final habit = habits[index];
-                final data =
-                    _completionData.putIfAbsent(habit.id, _generateMockCompletion);
-
-                return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Container(
-                            width: 32,
-                            height: 32,
-                            decoration: BoxDecoration(
-                              color: const Color(0xFF1E1E1E),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Icon(
-                              IconData(habit.iconData, fontFamily: 'MaterialIcons'),
-                              color: Colors.white,
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: Text(
-                              habit.name,
-                              style: const TextStyle(
-                                  color: Colors.white, fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                          Checkbox(
-                            value: _completedToday(habit.id),
-                            onChanged: (v) => _toggleToday(habit.id, v),
-                            activeColor: Color(habit.color),
-                          )
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-                      HabitHeatmap(
-                        completionData: data,
-                        icon: IconData(habit.iconData, fontFamily: 'MaterialIcons'),
-                        name: habit.name,
-                        tileColor: Color(habit.color),
-                        showHeader: false,
-                      ),
-                      const Divider(color: Colors.white24),
-                    ],
-                  ),
-
+                final data = _completionData[habit.id] ?? {};
                 final current = _currentStreaks[habit.id];
                 final longest = _longestStreaks[habit.id];
                 return HabitItemWidget(
                   habit: habit,
                   completionData: data,
                   completedToday: _completedToday(habit.id),
-                  onToggle: (v) => _toggleToday(habit.id, v),
+                  onToggle: () => _toggleToday(habit.id),
                   currentStreak: current,
                   longestStreak: longest,
-
                 );
               },
             ),

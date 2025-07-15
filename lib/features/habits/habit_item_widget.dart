@@ -25,7 +25,7 @@ class HabitItemWidget extends StatelessWidget {
   final bool completedToday;
 
   /// Callback when today's completion state changes.
-  final ValueChanged<bool?> onToggle;
+  final VoidCallback onToggle;
 
   /// Current streak count.
   final int? currentStreak;
@@ -96,18 +96,23 @@ class HabitItemWidget extends StatelessWidget {
                     const SizedBox(width: 8),
                   ],
                 ),
-              Checkbox(
-                value: completedToday,
-                onChanged: onToggle,
-                activeColor: purple,
+              IconButton(
+                icon: Icon(
+                  completedToday
+                      ? Icons.check_circle
+                      : Icons.check_circle_outline,
+                  color: completedToday ? Colors.white : Colors.grey,
+                ),
+                onPressed: onToggle,
               ),
             ],
           ),
           const SizedBox(height: 8),
           HabitHeatmap(
-            completionData: completionData,
+            completionMap: completionData,
             icon: icon,
             name: habit.name,
+            fillColor: Color(habit.color),
             showHeader: false,
           ),
           const Divider(color: Colors.white24),
