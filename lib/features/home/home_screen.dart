@@ -100,7 +100,7 @@ class _HomeScreenState extends State<HomeScreen> {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.settings, color: Colors.white),
-          onPressed: () {},
+          onPressed: () => context.go('/settings'),
         ),
         title: RichText(
           text: const TextSpan(

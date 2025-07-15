@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'routes/app_router.dart';
 import 'features/onboarding/onboarding_screen.dart';
 import 'features/home/home_screen.dart';
 import 'features/habits/add_edit_habit_screen.dart';
@@ -15,35 +16,7 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final router = GoRouter(
-      initialLocation: onboardingComplete ? '/home' : '/onboarding',
-      routes: [
-        GoRoute(
-          path: '/onboarding',
-          builder: (context, state) => const OnboardingScreen(),
-        ),
-        GoRoute(
-          path: '/home',
-          builder: (context, state) => const HomeScreen(),
-        ),
-        GoRoute(
-          path: '/add_habit',
-          builder: (context, state) => AddEditHabitScreen(habit: state.extra as Habit?),
-        ),
-        GoRoute(
-          path: '/create_category',
-          builder: (context, state) => const CategoryCreationScreen(),
-        ),
-        GoRoute(
-          path: '/streak_goal',
-          builder: (context, state) => StreakGoalScreen(current: state.extra as StreakGoal?),
-        ),
-        GoRoute(
-          path: '/reminder',
-          builder: (context, state) => ReminderScreen(current: state.extra as List<int>?),
-        ),
-      ],
-    );
+    final router = createRouter(onboardingComplete);
     final baseDark = ThemeData.dark();
     return MaterialApp.router(
       title: 'Habit Tracker',
