@@ -45,34 +45,56 @@ class _ReminderScreenState extends State<ReminderScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Reminders')),
-      body: Column(
-        children: [
-          ListTile(
-            title: const Text('Select all'),
-            trailing: Checkbox(
-              value: _selected.length == 7,
-              onChanged: (_) => _toggleAll(),
-            ),
-          ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: 7,
-              itemBuilder: (context, index) {
-                final day = index + 1;
-                return CheckboxListTile(
-                  title: Text(_weekdayName(day)),
-                  value: _selected.contains(day),
-                  onChanged: (_) => _toggle(day),
-                );
-              },
-            ),
-          ),
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.close, size: 24),
+          onPressed: () => Navigator.pop(context),
+        ),
+        centerTitle: true,
+        title: const Text('Reminder',
+            style: TextStyle(fontWeight: FontWeight.bold)),
+        backgroundColor: Colors.transparent,
+        actions: [
+          TextButton(
+            onPressed: _toggleAll,
+            child: const Text('Select all'),
+          )
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _save,
-        child: const Icon(Icons.check),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: List.generate(7, (i) {
+            final day = i + 1;
+            final selected = _selected.contains(day);
+            return FilterChip(
+              label: Text(_weekdayName(day)),
+              selected: selected,
+              onSelected: (_) => _toggle(day),
+              selectedColor: const Color(0xFF8A2BE2),
+              checkmarkColor: Colors.white,
+            );
+          }),
+        ),
+      ),
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.all(16),
+        child: SizedBox(
+          width: double.infinity,
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF8A2BE2),
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+            ),
+            onPressed: _save,
+            child: const Text('Save'),
+          ),
+        ),
       ),
     );
   }
