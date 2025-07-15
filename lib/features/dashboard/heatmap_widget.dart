@@ -44,8 +44,8 @@ class HabitHeatmap extends StatelessWidget {
     this.showHeader = true,
   });
 
-  /// Returns a color ranging from a light variant of [fillColor] to the full
-  /// color based on [count].
+  /// Returns a color ranging from the full [fillColor] to a lighter
+  /// variant based on [count].
 
   Color _colorForCount(int count) {
     final maxCount = trackingType == CompletionTrackingType.customValue
@@ -55,7 +55,7 @@ class HabitHeatmap extends StatelessWidget {
             : dailyCounts.values.reduce(math.max));
     final capped = math.min(count, maxCount);
     final t = maxCount == 0 ? 1.0 : capped / maxCount;
-    return Color.lerp(fillColor.withOpacity(0.5), fillColor, t)!;
+    return Color.lerp(fillColor, fillColor.withOpacity(0.5), t)!;
   }
 
   @override
