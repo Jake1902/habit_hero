@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:file_picker/file_picker.dart';
+import '../../core/services/storage_permission_service.dart';
 
 import '../../core/services/export_import_service.dart';
 
@@ -15,8 +16,11 @@ class ExportImportScreen extends StatefulWidget {
 
 class _ExportImportScreenState extends State<ExportImportScreen> {
   final ExportImportService _service = GetIt.I<ExportImportService>();
+  final StoragePermissionService _permService =
+      GetIt.I<StoragePermissionService>();
 
   Future<void> _exportJson() async {
+    await _permService.ensureStoragePermission();
     final path = await FilePicker.platform.getDirectoryPath();
     if (path == null) return;
     final messenger = ScaffoldMessenger.of(context);
@@ -36,6 +40,7 @@ class _ExportImportScreenState extends State<ExportImportScreen> {
   }
 
   Future<void> _exportCsv() async {
+    await _permService.ensureStoragePermission();
     final path = await FilePicker.platform.getDirectoryPath();
     if (path == null) return;
     final messenger = ScaffoldMessenger.of(context);
@@ -55,6 +60,7 @@ class _ExportImportScreenState extends State<ExportImportScreen> {
   }
 
   Future<void> _importFile() async {
+    await _permService.ensureStoragePermission();
     final result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['json', 'csv'],
