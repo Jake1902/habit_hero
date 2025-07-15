@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Displays a simple three page onboarding flow.
@@ -43,7 +44,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('onboarding_complete', true);
     if (mounted) {
-      Navigator.of(context).pushReplacementNamed('/home');
+      context.go('/home');
     }
   }
 

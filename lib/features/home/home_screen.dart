@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 /// Home screen shown when the user has completed onboarding.
 ///
@@ -8,7 +9,7 @@ class HomeScreen extends StatelessWidget {
 
   /// Navigates to the add habit flow.
   void _goToAddHabit(BuildContext context) {
-    Navigator.of(context).pushNamed('/add_habit');
+    context.go('/add_habit');
   }
 
   @override
