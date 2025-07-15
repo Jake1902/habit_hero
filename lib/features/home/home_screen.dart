@@ -7,6 +7,7 @@ import '../../core/streak/streak_service.dart';
 import 'package:get_it/get_it.dart';
 import 'dart:math';
 import '../habits/habit_item_widget.dart';
+import '../../core/services/notification_service.dart';
 
 /// Home screen shown when the user has completed onboarding.
 ///
@@ -63,6 +64,32 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  Future<void> _archiveHabit(Habit habit) async {
+    final notificationService = GetIt.I<NotificationService>();
+    await notificationService.cancelHabitReminders(habit.id);
+    await HabitRepository.archiveHabit(habit.id);
+    if (mounted) {
+      _refresh();
+    }
+  }
+
+  void _showHabitOptions(Habit habit) {
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: const Color(0xFF1E1E1E),
+      builder: (context) => SafeArea(
+        child: ListTile(
+          leading: const Icon(Icons.archive, color: Colors.white),
+          title: const Text('Archive', style: TextStyle(color: Colors.white)),
+          onTap: () {
+            Navigator.pop(context);
+            _archiveHabit(habit);
+          },
+        ),
+      ),
+    );
+  }
+
   Map<DateTime, int> _generateMockCompletion() {
     final map = <DateTime, int>{};
     final now = DateTime.now();
@@ -100,7 +127,7 @@ class _HomeScreenState extends State<HomeScreen> {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.settings, color: Colors.white),
-          onPressed: () => context.go('/settings'),
+          onPressed: () => context.push('/settings'),
         ),
         title: RichText(
           text: const TextSpan(
@@ -201,6 +228,17 @@ class _HomeScreenState extends State<HomeScreen> {
                   currentStreak: current,
                   longestStreak: longest,
                   onEdit: () => _editHabit(habit),
+
+                  onLongPress: () => _showHabitOptions(habit),
+
+                  onDayTapped: (day) {
+                    context.push('/calendar_edit', extra: {
+                      'habitId': habit.id,
+                      'habitName': habit.name,
+                      'completionMap': data,
+                    });
+                  },
+
                 );
               },
             ),

@@ -32,7 +32,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             subtitle: const Text('View or restore archived habits',
                 style: TextStyle(color: Color(0xFFB0B0B0))),
             trailing: const Icon(Icons.chevron_right, color: Colors.white),
-            onTap: () => context.go('/archive'),
+            onTap: () => context.push('/archive'),
           ),
           ListTile(
             leading: const Icon(Icons.backup, color: Colors.white),
@@ -47,10 +47,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ListTile(
             leading: const Icon(Icons.color_lens_outlined, color: Colors.white),
             title: const Text('Theme', style: TextStyle(color: Colors.white)),
-            subtitle: const Text('Theme selector coming soon',
+            subtitle: const Text('Choose between light and dark mode',
                 style: TextStyle(color: Color(0xFFB0B0B0))),
             trailing: const Icon(Icons.chevron_right, color: Colors.white),
-            onTap: () {},
+            onTap: () => context.push('/theme'),
           ),
         ],
       ),
