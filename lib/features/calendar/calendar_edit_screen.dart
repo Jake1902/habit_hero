@@ -73,23 +73,23 @@ class _CalendarEditScreenState extends State<CalendarEditScreen> {
 
   @override
   Widget build(BuildContext context) {
-    const purple = Color(0xFF8A2BE2);
+    final scheme = Theme.of(context).colorScheme;
     final firstDay = DateTime.now().subtract(const Duration(days: 365));
     final lastDay = DateTime.now();
 
     return Scaffold(
-      backgroundColor: const Color(0xFF121212),
+      backgroundColor: scheme.background,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          icon: Icon(Icons.arrow_back, color: scheme.onBackground),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
           widget.habitName,
-          style: const TextStyle(
-            color: Colors.white,
+          style: TextStyle(
+            color: scheme.onBackground,
             fontSize: 20,
             fontWeight: FontWeight.bold,
           ),
@@ -107,39 +107,42 @@ class _CalendarEditScreenState extends State<CalendarEditScreen> {
                   calendarFormat: CalendarFormat.month,
                   onDaySelected: _handleDaySelected,
                   selectedDayPredicate: _isSelected,
-                  headerStyle: const HeaderStyle(
+                  headerStyle: HeaderStyle(
                     formatButtonVisible: false,
                     titleCentered: true,
-                    titleTextStyle: TextStyle(color: Colors.white),
+                    titleTextStyle:
+                        TextStyle(color: scheme.onBackground),
                     leftChevronIcon:
-                        Icon(Icons.chevron_left, color: Colors.white),
+                        Icon(Icons.chevron_left, color: scheme.onBackground),
                     rightChevronIcon:
-                        Icon(Icons.chevron_right, color: Colors.white),
+                        Icon(Icons.chevron_right, color: scheme.onBackground),
                   ),
-                  daysOfWeekStyle: const DaysOfWeekStyle(
-                    weekdayStyle: TextStyle(color: Color(0xFFB0B0B0)),
-                    weekendStyle: TextStyle(color: Color(0xFFB0B0B0)),
+                  daysOfWeekStyle: DaysOfWeekStyle(
+                    weekdayStyle:
+                        TextStyle(color: scheme.onBackground.withOpacity(0.6)),
+                    weekendStyle:
+                        TextStyle(color: scheme.onBackground.withOpacity(0.6)),
                   ),
                   calendarStyle: CalendarStyle(
                     outsideDaysVisible: false,
                     todayDecoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      border: Border.all(color: purple),
+                      border: Border.all(color: scheme.primary),
                     ),
-                    selectedDecoration: const BoxDecoration(
+                    selectedDecoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: purple,
+                      color: scheme.primary,
                     ),
-                    markerDecoration: const BoxDecoration(
-                      color: purple,
+                    markerDecoration: BoxDecoration(
+                      color: scheme.primary,
                       shape: BoxShape.circle,
                     ),
                     defaultTextStyle:
-                        const TextStyle(color: Colors.white, fontSize: 14),
+                        TextStyle(color: scheme.onBackground, fontSize: 14),
                     weekendTextStyle:
-                        const TextStyle(color: Colors.white, fontSize: 14),
+                        TextStyle(color: scheme.onBackground, fontSize: 14),
                     disabledTextStyle:
-                        const TextStyle(color: Color(0xFF555555)),
+                        TextStyle(color: scheme.onBackground.withOpacity(0.3)),
                   ),
                 ),
                 if (_loading)
@@ -155,16 +158,14 @@ class _CalendarEditScreenState extends State<CalendarEditScreen> {
               width: double.infinity,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: purple,
+                  backgroundColor: scheme.primary,
+                  foregroundColor: scheme.onPrimary,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(24),
                   ),
                 ),
                 onPressed: () => Navigator.pop(context),
-                child: const Text(
-                  'Done',
-                  style: TextStyle(color: Colors.white),
-                ),
+                child: const Text('Done'),
               ),
             ),
           ),

@@ -50,7 +50,7 @@ class HabitItemWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const purple = Color(0xFF8A2BE2);
+    final scheme = Theme.of(context).colorScheme;
     final icon = IconData(habit.iconData, fontFamily: 'MaterialIcons');
     final showBadge = currentStreak != null &&
         (currentStreak == 7 || currentStreak == 30 || currentStreak == 100);
@@ -73,7 +73,9 @@ class HabitItemWidget extends StatelessWidget {
                       shape: BoxShape.circle,
                       color: Color(habit.color),
                     ),
-                    child: Icon(icon, color: Colors.white, size: 16),
+                    child: Icon(icon,
+                        color: Theme.of(context).colorScheme.onPrimary,
+                        size: 16),
                   ),
                   if (showBadge)
                     const Positioned(
@@ -91,8 +93,8 @@ class HabitItemWidget extends StatelessWidget {
               Expanded(
                 child: Text(
                   habit.name,
-                  style: const TextStyle(
-                    color: Colors.white,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onBackground,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -100,15 +102,18 @@ class HabitItemWidget extends StatelessWidget {
               if (currentStreak != null)
                 Row(
                   children: [
-                    const Icon(
+                    Icon(
                       Icons.local_fire_department,
                       size: 16,
-                      color: purple,
+                      color: Theme.of(context).colorScheme.primary,
                     ),
                     const SizedBox(width: 2),
                     Text(
                       '$currentStreak',
-                      style: const TextStyle(color: Colors.white, fontSize: 12),
+                      style: TextStyle(
+                          color:
+                              Theme.of(context).colorScheme.onBackground,
+                          fontSize: 12),
                     ),
                     const SizedBox(width: 8),
                   ],
@@ -116,6 +121,22 @@ class HabitItemWidget extends StatelessWidget {
               Row(
                 children: [
                   IconButton(
+
+                    icon: Icon(Icons.remove,
+                        color: Theme.of(context).colorScheme.onBackground),
+                    onPressed: todayCount > 0 ? onDecrement : null,
+                  ),
+                  Text(
+                    '$todayCount',
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.onBackground,
+                        fontSize: 16),
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.add,
+                        color: Theme.of(context).colorScheme.onBackground),
+                    onPressed: onIncrement,
+
                     icon: Icon(
                       habit.isMultiple
                           ? Icons.check_box
@@ -135,6 +156,7 @@ class HabitItemWidget extends StatelessWidget {
                         }
                       }
                     },
+
                   ),
                   if (habit.isMultiple)
                     Text(
@@ -146,7 +168,9 @@ class HabitItemWidget extends StatelessWidget {
               ),
               if (onEdit != null)
                 IconButton(
-                  icon: const Icon(Icons.edit, color: Colors.white, size: 20),
+                  icon: Icon(Icons.edit,
+                      color: Theme.of(context).colorScheme.onBackground,
+                      size: 20),
                   onPressed: onEdit,
                 ),
             ],
@@ -162,7 +186,7 @@ class HabitItemWidget extends StatelessWidget {
             showHeader: false,
             onDayTapped: onDayTapped,
           ),
-          const Divider(color: Colors.white24),
+          Divider(color: Theme.of(context).colorScheme.onBackground.withOpacity(0.24)),
         ],
       ),
       )

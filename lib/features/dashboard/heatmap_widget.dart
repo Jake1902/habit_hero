@@ -76,8 +76,10 @@ class HabitHeatmap extends StatelessWidget {
         final key =
             '${keyDate.year.toString().padLeft(4, '0')}-${keyDate.month.toString().padLeft(2, '0')}-${keyDate.day.toString().padLeft(2, '0')}';
         final count = dailyCounts[key] ?? 0;
-        final color =
-            count > 0 ? _colorForCount(count) : const Color(0xFF1E1E1E);
+        final scheme = Theme.of(context).colorScheme;
+        final color = count > 0
+            ? _colorForCount(count)
+            : scheme.surfaceVariant;
         final message = '$key: $count';
         squares.add(GestureDetector(
           onTap: () {
@@ -108,8 +110,9 @@ class HabitHeatmap extends StatelessWidget {
       columns.add(Column(children: squares));
     }
 
+    final scheme = Theme.of(context).colorScheme;
     return Container(
-      color: const Color(0xFF121212),
+      color: scheme.background,
       padding: const EdgeInsets.all(8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -117,12 +120,12 @@ class HabitHeatmap extends StatelessWidget {
           if (showHeader)
             Row(
               children: [
-                Icon(icon, color: Colors.white),
+                Icon(icon, color: scheme.onBackground),
                 const SizedBox(width: 8),
                 Text(
                   name,
-                  style: const TextStyle(
-                    color: Colors.white,
+                  style: TextStyle(
+                    color: scheme.onBackground,
                     fontWeight: FontWeight.bold,
                   ),
                 ),

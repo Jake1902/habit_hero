@@ -83,16 +83,16 @@ class _ExportImportScreenState extends State<ExportImportScreen> {
 
   @override
   Widget build(BuildContext context) {
-    const purple = Color(0xFF8A2BE2);
+    final scheme = Theme.of(context).colorScheme;
     return Scaffold(
-      backgroundColor: const Color(0xFF121212),
+      backgroundColor: scheme.background,
       appBar: AppBar(
         title: const Text('Backup & Restore'),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          icon: Icon(Icons.arrow_back, color: scheme.onBackground),
           onPressed: () => Navigator.pop(context),
         ),
-        backgroundColor: const Color(0xFF121212),
+        backgroundColor: scheme.background,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
@@ -101,8 +101,8 @@ class _ExportImportScreenState extends State<ExportImportScreen> {
           children: [
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: purple,
-                foregroundColor: Colors.white,
+                backgroundColor: scheme.primary,
+                foregroundColor: scheme.onPrimary,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
                 ),
@@ -113,8 +113,8 @@ class _ExportImportScreenState extends State<ExportImportScreen> {
             const SizedBox(height: 16),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: purple,
-                foregroundColor: Colors.white,
+                backgroundColor: scheme.primary,
+                foregroundColor: scheme.onPrimary,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
                 ),
@@ -125,8 +125,8 @@ class _ExportImportScreenState extends State<ExportImportScreen> {
             const SizedBox(height: 16),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: purple,
-                foregroundColor: Colors.white,
+                backgroundColor: scheme.primary,
+                foregroundColor: scheme.onPrimary,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
                 ),

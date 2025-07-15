@@ -22,7 +22,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    const purple = Color(0xFF8A2BE2);
+    final scheme = Theme.of(context).colorScheme;
     final service = context.watch<AnalyticsService>();
     final overall = service.overall;
     final totals = service.last7Totals;
@@ -33,11 +33,11 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     }
 
     return Scaffold(
-      backgroundColor: const Color(0xFF121212),
+      backgroundColor: scheme.background,
       appBar: AppBar(
         title: const Text('Analytics'),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          icon: Icon(Icons.arrow_back, color: scheme.onBackground),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -72,7 +72,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                     LineChartBarData(
                       spots: spots,
                       isCurved: true,
-                      color: purple,
+                      color: scheme.primary,
                       barWidth: 3,
                       dotData: FlDotData(show: false),
                     ),
@@ -96,33 +96,34 @@ class StatCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const purple = Color(0xFF8A2BE2);
+    final scheme = Theme.of(context).colorScheme;
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFF1E1E1E),
+        color: scheme.surfaceVariant,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Row(
         children: [
-          Icon(icon, color: purple, size: 28),
+          Icon(icon, color: scheme.primary, size: 28),
           const SizedBox(width: 12),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 value,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 20,
-                  color: Colors.white,
+                  color: scheme.onBackground,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               const SizedBox(height: 4),
               Text(
                 caption,
-                style: const TextStyle(color: Colors.white70, fontSize: 12),
+                style:
+                    TextStyle(color: scheme.onBackground.withOpacity(0.7), fontSize: 12),
               ),
             ],
           ),
