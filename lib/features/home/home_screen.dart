@@ -8,6 +8,10 @@ import 'package:get_it/get_it.dart';
 import 'dart:math';
 import '../habits/habit_item_widget.dart';
 import '../../core/services/notification_service.dart';
+import '../../core/analytics/analytics_service.dart';
+import '../../core/services/settings_provider.dart';
+import 'package:provider/provider.dart';
+import '../analytics/analytics_quick_row.dart';
 
 /// Home screen shown when the user has completed onboarding.
 ///
@@ -29,6 +33,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     _habitsFuture = _loadAndCompute();
+    GetIt.I<AnalyticsService>().refresh();
   }
 
   Future<List<Habit>> _loadAndCompute() async {
@@ -145,7 +150,7 @@ class _HomeScreenState extends State<HomeScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.bar_chart, color: Colors.white),
-            onPressed: () {},
+            onPressed: () => context.go('/analytics'),
           ),
           IconButton(
             icon: const Icon(Icons.add_circle_outline, color: Colors.white),
@@ -211,36 +216,36 @@ class _HomeScreenState extends State<HomeScreen> {
 
           return RefreshIndicator(
             onRefresh: _refresh,
-            child: ListView.builder(
-              itemCount: habits.length,
-              itemBuilder: (context, index) {
-                final habit = habits[index];
-                final data =
-                    _completionData.putIfAbsent(habit.id, _generateMockCompletion);
+            child: ListView(
+              children: [
+                if (context.watch<SettingsProvider>().showQuickStats)
+                  const Padding(
+                    padding: EdgeInsets.only(bottom: 16),
+                    child: AnalyticsQuickRow(),
+                  ),
+                for (final habit in habits)
+                  HabitItemWidget(
+                    habit: habit,
+                    completionData:
+                        _completionData.putIfAbsent(habit.id, _generateMockCompletion),
+                    completedToday: _completedToday(habit.id),
+                    onToggle: (v) => _toggleToday(habit.id, v),
+                    currentStreak: _currentStreaks[habit.id],
+                    longestStreak: _longestStreaks[habit.id],
+                    onEdit: () => _editHabit(habit),
 
-                final current = _currentStreaks[habit.id];
-                final longest = _longestStreaks[habit.id];
-                return HabitItemWidget(
-                  habit: habit,
-                  completionData: data,
-                  completedToday: _completedToday(habit.id),
-                  onToggle: (v) => _toggleToday(habit.id, v),
-                  currentStreak: current,
-                  longestStreak: longest,
-                  onEdit: () => _editHabit(habit),
+                    onLongPress: () => _showHabitOptions(habit),
 
-                  onLongPress: () => _showHabitOptions(habit),
+                    onDayTapped: (day) {
+                      context.push('/calendar_edit', extra: {
+                        'habitId': habit.id,
+                        'habitName': habit.name,
+                        'completionMap': _completionData[habit.id],
+                      });
+                    },
 
-                  onDayTapped: (day) {
-                    context.push('/calendar_edit', extra: {
-                      'habitId': habit.id,
-                      'habitName': habit.name,
-                      'completionMap': data,
-                    });
-                  },
-
-                );
-              },
+                  ),
+              ],
             ),
           );
         },

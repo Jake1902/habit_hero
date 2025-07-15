@@ -14,6 +14,7 @@ import '../features/settings/settings_screen.dart';
 import '../features/export_import/export_import_screen.dart';
 
 import '../features/settings/theme_screen.dart';
+import '../features/analytics/analytics_screen.dart';
 
 import '../core/data/models/habit.dart';
 
@@ -89,6 +90,11 @@ GoRouter createRouter(bool onboardingComplete, GlobalKey<NavigatorState> key) {
       GoRoute(
         path: '/theme',
         builder: (_, __) => const ThemeScreen(),
+      ),
+      GoRoute(
+        path: '/analytics',
+        name: 'analytics',
+        builder: (_, __) => const AnalyticsScreen(),
       ),
     ],
   );
