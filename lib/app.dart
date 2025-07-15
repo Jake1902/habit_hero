@@ -1,25 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'routes/app_router.dart';
-import 'features/onboarding/onboarding_screen.dart';
-import 'features/home/home_screen.dart';
-import 'features/habits/add_edit_habit_screen.dart';
-import 'features/habits/category_creation_screen.dart';
-import 'features/habits/streak_goal_screen.dart';
-import 'features/habits/reminder_screen.dart';
-import 'core/data/models/habit.dart';
 import 'package:provider/provider.dart';
+
 import 'core/services/settings_provider.dart';
+import 'routes/app_router.dart';
 
 /// Root app widget
-class App extends StatelessWidget {
+class App extends StatefulWidget {
   final bool onboardingComplete;
   final GlobalKey<NavigatorState> navigatorKey;
   const App({super.key, required this.onboardingComplete, required this.navigatorKey});
 
   @override
+  State<App> createState() => _AppState();
+}
+
+class _AppState extends State<App> {
+  late final GoRouter _router;
+
+  @override
+  void initState() {
+    super.initState();
+    _router = createRouter(widget.onboardingComplete, widget.navigatorKey);
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final router = createRouter(onboardingComplete, navigatorKey);
     final settings = context.watch<SettingsProvider>();
     final baseDark = ThemeData.dark();
     final baseLight = ThemeData.light();
@@ -51,6 +57,20 @@ class App extends StatelessWidget {
         primary: const Color(0xFF8A2BE2),
         secondary: const Color(0xFF8A2BE2),
       ),
+      scaffoldBackgroundColor: Colors.white,
+      appBarTheme: const AppBarTheme(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        iconTheme: IconThemeData(color: Colors.black),
+      ),
+      inputDecorationTheme: const InputDecorationTheme(
+        filled: true,
+        fillColor: Color(0xFFF5F5F5),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(12)),
+          borderSide: BorderSide.none,
+        ),
+      ),
     );
 
     return MaterialApp.router(
@@ -58,7 +78,7 @@ class App extends StatelessWidget {
       themeMode: settings.themeMode,
       theme: lightTheme,
       darkTheme: darkTheme,
-      routerConfig: router,
+      routerConfig: _router,
     );
   }
 }
