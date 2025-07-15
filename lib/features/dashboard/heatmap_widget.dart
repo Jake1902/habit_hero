@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 /// habit completion over the past [days] days.
 class HabitHeatmap extends StatelessWidget {
   /// Map of dates to completion counts.
-  final Map<DateTime, int> completionData;
+  final Map<DateTime, int> completionMap;
 
   /// Icon representing the habit.
   final IconData icon;
@@ -15,7 +15,7 @@ class HabitHeatmap extends StatelessWidget {
   final String name;
 
   /// Base color used for completion tiles.
-  final Color tileColor;
+  final Color fillColor;
 
   /// Number of days to show, defaults to 90.
   final int days;
@@ -28,26 +28,26 @@ class HabitHeatmap extends StatelessWidget {
 
   const HabitHeatmap({
     super.key,
-    required this.completionData,
+    required this.completionMap,
     required this.icon,
     required this.name,
-    required this.tileColor,
+    required this.fillColor,
     required this.onDayTapped,
     this.days = 90,
     this.showHeader = true,
   });
 
-  /// Returns a color ranging from a light variant of [tileColor] to the full
+  /// Returns a color ranging from a light variant of [fillColor] to the full
   /// color based on [count].
   Color _colorForCount(int count, int maxCount) {
     final t = maxCount == 0 ? 1.0 : count / maxCount;
-    return Color.lerp(tileColor.withOpacity(0.5), tileColor, t)!;
+    return Color.lerp(fillColor.withOpacity(0.5), fillColor, t)!;
   }
 
   @override
   Widget build(BuildContext context) {
     final maxCount =
-        completionData.values.isEmpty ? 0 : completionData.values.reduce(math.max);
+        completionMap.values.isEmpty ? 0 : completionMap.values.reduce(math.max);
     final today = DateTime.now();
     final start = DateTime(today.year, today.month, today.day)
         .subtract(Duration(days: days - 1));
@@ -61,7 +61,7 @@ class HabitHeatmap extends StatelessWidget {
         if (index >= days) break;
         final date = start.add(Duration(days: index));
         final key = DateTime(date.year, date.month, date.day);
-        final count = completionData[key] ?? 0;
+        final count = completionMap[key] ?? 0;
         final color =
             count > 0 ? _colorForCount(count, maxCount) : const Color(0xFF1E1E1E);
         final message = '${key.toIso8601String().split('T').first}: $count';

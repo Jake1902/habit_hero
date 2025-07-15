@@ -3,9 +3,9 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/data/habit_repository.dart';
 import '../../core/data/models/habit.dart';
+import '../../core/data/completion_repository.dart';
 import '../../core/streak/streak_service.dart';
 import 'package:get_it/get_it.dart';
-import 'dart:math';
 import '../habits/habit_item_widget.dart';
 import '../../core/services/notification_service.dart';
 
@@ -34,11 +34,14 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<List<Habit>> _loadAndCompute() async {
     final habits = await HabitRepository.loadHabits();
     final service = GetIt.I<StreakService>();
+    final completionRepo = GetIt.I<CompletionRepository>();
     for (final habit in habits) {
       final cs = await service.getCurrentStreak(habit.id);
       final ls = await service.getLongestStreak(habit.id);
       _currentStreaks[habit.id] = cs;
       _longestStreaks[habit.id] = ls;
+      final map = await completionRepo.getCompletionMap(habit.id);
+      _completionData[habit.id] = map;
     }
     return habits;
   }
@@ -90,16 +93,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Map<DateTime, int> _generateMockCompletion() {
-    final map = <DateTime, int>{};
-    final now = DateTime.now();
-    final random = Random();
-    for (var i = 0; i < 90; i++) {
-      final day = DateTime(now.year, now.month, now.day).subtract(Duration(days: i));
-      map[day] = random.nextInt(3); // 0-2 completions
-    }
-    return map;
-  }
 
   bool _completedToday(String id) {
     final today = DateTime.now();
@@ -109,12 +102,20 @@ class _HomeScreenState extends State<HomeScreen> {
     return (data[key] ?? 0) > 0;
   }
 
-  void _toggleToday(String id, bool? value) {
+  Future<void> _toggleToday(String id, bool? value) async {
+    final repo = GetIt.I<CompletionRepository>();
+    final service = GetIt.I<StreakService>();
     final today = DateTime.now();
-    final key = DateTime(today.year, today.month, today.day);
-    final data = _completionData.putIfAbsent(id, _generateMockCompletion);
-    data[key] = (value ?? false) ? 1 : 0;
-    setState(() {});
+    await repo.toggleCompletion(id, today);
+    final map = await repo.getCompletionMap(id);
+    final cs = await service.getCurrentStreak(id);
+    final ls = await service.getLongestStreak(id);
+    if (!mounted) return;
+    setState(() {
+      _completionData[id] = map;
+      _currentStreaks[id] = cs;
+      _longestStreaks[id] = ls;
+    });
   }
 
   @override
@@ -215,14 +216,13 @@ class _HomeScreenState extends State<HomeScreen> {
               itemCount: habits.length,
               itemBuilder: (context, index) {
                 final habit = habits[index];
-                final data =
-                    _completionData.putIfAbsent(habit.id, _generateMockCompletion);
+                final data = _completionData[habit.id] ?? {};
 
                 final current = _currentStreaks[habit.id];
                 final longest = _longestStreaks[habit.id];
                 return HabitItemWidget(
                   habit: habit,
-                  completionData: data,
+                  completionMap: data,
                   completedToday: _completedToday(habit.id),
                   onToggle: (v) => _toggleToday(habit.id, v),
                   currentStreak: current,
