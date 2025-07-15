@@ -10,7 +10,11 @@ import '../features/habits/reminder_setup_screen.dart';
 import '../features/calendar/calendar_edit_screen.dart';
 import '../features/archive/archive_screen.dart';
 import '../features/settings/settings_screen.dart';
+
+import '../features/export_import/export_import_screen.dart';
+
 import '../features/settings/theme_screen.dart';
+
 import '../core/data/models/habit.dart';
 
 GoRouter createRouter(bool onboardingComplete, GlobalKey<NavigatorState> key) {
@@ -78,8 +82,14 @@ GoRouter createRouter(bool onboardingComplete, GlobalKey<NavigatorState> key) {
         builder: (_, __) => const SettingsScreen(),
       ),
       GoRoute(
+
+        path: '/backup_restore',
+        name: 'backup_restore',
+        builder: (_, __) => const ExportImportScreen(),
+
         path: '/theme',
         builder: (_, __) => const ThemeScreen(),
+
       ),
     ],
   );
