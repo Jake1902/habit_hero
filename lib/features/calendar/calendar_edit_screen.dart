@@ -4,7 +4,6 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:get_it/get_it.dart';
 
 import '../../core/data/completion_repository.dart';
-import '../../core/utils/date_utils.dart';
 
 /// Screen allowing users to back-date or edit habit completions.
 class CalendarEditScreen extends StatefulWidget {
@@ -22,7 +21,7 @@ class CalendarEditScreen extends StatefulWidget {
   final String habitName;
 
   /// Initial map of completion counts for each day.
-  final Map<DateTime, int> completionMap;
+  final Map<String, int> completionMap;
 
   @override
   State<CalendarEditScreen> createState() => _CalendarEditScreenState();
@@ -33,7 +32,7 @@ class _CalendarEditScreenState extends State<CalendarEditScreen> {
 
   late DateTime _focusedDay;
   DateTime? _selectedDay;
-  late Map<DateTime, int> _completionMap;
+  late Map<String, int> _completionMap;
   bool _loading = false;
 
   @override
@@ -67,7 +66,8 @@ class _CalendarEditScreenState extends State<CalendarEditScreen> {
   }
 
   bool _isSelected(DateTime day) {
-    final key = startOfDay(day);
+    final key =
+        '${day.year.toString().padLeft(4, '0')}-${day.month.toString().padLeft(2, '0')}-${day.day.toString().padLeft(2, '0')}';
     return _completionMap[key] != null && _completionMap[key]! > 0;
   }
 

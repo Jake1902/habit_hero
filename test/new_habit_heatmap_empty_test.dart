@@ -38,7 +38,7 @@ void main() {
 
     expect(find.byWidgetPredicate(predicate), findsNothing);
 
-    await tester.tap(find.byType(Checkbox));
+    await tester.tap(find.byIcon(Icons.add));
     await tester.pumpAndSettle();
 
     expect(find.byWidgetPredicate(predicate), findsOneWidget);

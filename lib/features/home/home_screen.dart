@@ -12,6 +12,7 @@ import '../../core/analytics/analytics_service.dart';
 import '../../core/services/settings_provider.dart';
 import 'package:provider/provider.dart';
 import '../analytics/analytics_quick_row.dart';
+import 'package:intl/intl.dart';
 
 /// Home screen shown when the user has completed onboarding.
 ///
@@ -25,7 +26,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   late Future<List<Habit>> _habitsFuture;
-  final Map<String, Map<DateTime, int>> _completionData = {};
+  final Map<String, Map<String, int>> _completionData = {};
   final Map<String, int> _currentStreaks = {};
   final Map<String, int> _longestStreaks = {};
 
@@ -41,8 +42,8 @@ class _HomeScreenState extends State<HomeScreen> {
     final service = GetIt.I<StreakService>();
     final completionRepo = GetIt.I<CompletionRepository>();
     for (final habit in habits) {
-      final cs = await service.getCurrentStreak(habit.id);
-      final ls = await service.getLongestStreak(habit.id);
+      final cs = await service.getCurrentStreak(habit);
+      final ls = await service.getLongestStreak(habit);
       _currentStreaks[habit.id] = cs;
       _longestStreaks[habit.id] = ls;
       final map = await completionRepo.getCompletionMap(habit.id);
@@ -99,22 +100,39 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
 
-  bool _completedToday(String id) {
-    final today = DateTime.now();
-    final key = DateTime(today.year, today.month, today.day);
+  int _todayCount(String id) {
+    final key = DateFormat('yyyy-MM-dd').format(DateTime.now().toUtc());
     final data = _completionData[id];
-    if (data == null) return false;
-    return (data[key] ?? 0) > 0;
+    if (data == null) return 0;
+    return data[key] ?? 0;
   }
 
-  Future<void> _toggleToday(String id, bool? value) async {
+  Future<void> _incrementToday(String id) async {
     final repo = GetIt.I<CompletionRepository>();
     final service = GetIt.I<StreakService>();
-    final today = DateTime.now();
-    await repo.toggleCompletion(id, today);
+    await repo.incrementToday(id);
     final map = await repo.getCompletionMap(id);
-    final cs = await service.getCurrentStreak(id);
-    final ls = await service.getLongestStreak(id);
+    final habits = await HabitRepository.loadHabits();
+    final habit = habits.firstWhere((h) => h.id == id);
+    final cs = await service.getCurrentStreak(habit);
+    final ls = await service.getLongestStreak(habit);
+    if (!mounted) return;
+    setState(() {
+      _completionData[id] = map;
+      _currentStreaks[id] = cs;
+      _longestStreaks[id] = ls;
+    });
+  }
+
+  Future<void> _decrementToday(String id) async {
+    final repo = GetIt.I<CompletionRepository>();
+    final service = GetIt.I<StreakService>();
+    await repo.decrementToday(id);
+    final map = await repo.getCompletionMap(id);
+    final habits = await HabitRepository.loadHabits();
+    final habit = habits.firstWhere((h) => h.id == id);
+    final cs = await service.getCurrentStreak(habit);
+    final ls = await service.getLongestStreak(habit);
     if (!mounted) return;
     setState(() {
       _completionData[id] = map;
@@ -228,9 +246,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 for (final habit in habits)
                   HabitItemWidget(
                     habit: habit,
-                    completionMap: _completionData[habit.id] ?? {},
-                    completedToday: _completedToday(habit.id),
-                    onToggle: (v) => _toggleToday(habit.id, v),
+
+                    completionMap:
+                        _completionData.putIfAbsent(habit.id, () => {}),
+                    todayCount: _todayCount(habit.id),
+                    onIncrement: () => _incrementToday(habit.id),
+                    onDecrement: () => _decrementToday(habit.id),
+
                     currentStreak: _currentStreaks[habit.id],
                     longestStreak: _longestStreaks[habit.id],
                     onEdit: () => _editHabit(habit),

@@ -1,12 +1,13 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import '../../core/data/models/habit.dart';
 
 /// Widget that displays a calendar-style heatmap representing
 /// habit completion over the past [days] days.
 class HabitHeatmap extends StatelessWidget {
-  /// Map of dates to completion counts.
-  final Map<DateTime, int> completionMap;
+  /// Map of dates to completion counts (yyyy-MM-dd).
+  final Map<String, int> dailyCounts;
 
   /// Icon representing the habit.
   final IconData icon;
@@ -16,6 +17,10 @@ class HabitHeatmap extends StatelessWidget {
 
   /// Base color used for completion tiles.
   final Color fillColor;
+
+  /// Target count when using custom tracking.
+  final int completionTarget;
+  final CompletionTrackingType trackingType;
 
   /// Number of days to show, defaults to 90.
   final int days;
@@ -28,27 +33,34 @@ class HabitHeatmap extends StatelessWidget {
 
   const HabitHeatmap({
     super.key,
-    required this.completionMap,
+    required this.dailyCounts,
     required this.icon,
     required this.name,
     required this.fillColor,
     required this.onDayTapped,
+    required this.completionTarget,
+    required this.trackingType,
     this.days = 90,
     this.showHeader = true,
   });
 
   /// Returns a color ranging from a light variant of [fillColor] to the full
   /// color based on [count].
-  Color _colorForCount(int count, int maxCount) {
-    final t = maxCount == 0 ? 1.0 : count / maxCount;
+
+  Color _colorForCount(int count) {
+    final maxCount = trackingType == CompletionTrackingType.customValue
+        ? completionTarget
+        : (dailyCounts.values.isEmpty
+            ? 1
+            : dailyCounts.values.reduce(math.max));
+    final capped = math.min(count, maxCount);
+    final t = maxCount == 0 ? 1.0 : capped / maxCount;
     return Color.lerp(fillColor.withOpacity(0.5), fillColor, t)!;
   }
 
   @override
   Widget build(BuildContext context) {
-    final maxCount =
-        completionMap.values.isEmpty ? 0 : completionMap.values.reduce(math.max);
-    final today = DateTime.now();
+    final today = DateTime.now().toUtc();
     final start = DateTime(today.year, today.month, today.day)
         .subtract(Duration(days: days - 1));
     final weekCount = (days / 7).ceil();
@@ -60,11 +72,13 @@ class HabitHeatmap extends StatelessWidget {
         final index = w * 7 + d;
         if (index >= days) break;
         final date = start.add(Duration(days: index));
-        final key = DateTime(date.year, date.month, date.day);
-        final count = completionMap[key] ?? 0;
+        final keyDate = DateTime(date.year, date.month, date.day).toUtc();
+        final key =
+            '${keyDate.year.toString().padLeft(4, '0')}-${keyDate.month.toString().padLeft(2, '0')}-${keyDate.day.toString().padLeft(2, '0')}';
+        final count = dailyCounts[key] ?? 0;
         final color =
-            count > 0 ? _colorForCount(count, maxCount) : const Color(0xFF1E1E1E);
-        final message = '${key.toIso8601String().split('T').first}: $count';
+            count > 0 ? _colorForCount(count) : const Color(0xFF1E1E1E);
+        final message = '$key: $count';
         squares.add(GestureDetector(
           onTap: () {
             ScaffoldMessenger.of(context)
@@ -75,7 +89,7 @@ class HabitHeatmap extends StatelessWidget {
                   duration: const Duration(seconds: 1),
                 ),
               );
-            onDayTapped?.call(key);
+            onDayTapped?.call(keyDate);
           },
           child: Tooltip(
             message: message,
