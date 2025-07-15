@@ -23,4 +23,30 @@ class CompletionRepository {
     final data = jsonEncode(dates.map((e) => e.toIso8601String()).toList());
     await prefs.setString('$_prefix$habitId', data);
   }
+
+  /// Returns a map of completion counts keyed by day.
+  Future<Map<DateTime, int>> getCompletionMap(String habitId) async {
+    final dates = await getCompletionDates(habitId);
+    final map = <DateTime, int>{};
+    for (final d in dates) {
+      final key = DateTime(d.year, d.month, d.day);
+      map[key] = (map[key] ?? 0) + 1;
+    }
+    return map;
+  }
+
+  /// Toggles completion state for a [date] of the habit.
+  Future<void> toggleCompletion(String habitId, DateTime date) async {
+    final dates = await getCompletionDates(habitId);
+    final day = DateTime(date.year, date.month, date.day);
+    final exists = dates.any((d) =>
+        d.year == day.year && d.month == day.month && d.day == day.day);
+    if (exists) {
+      dates.removeWhere((d) =>
+          d.year == day.year && d.month == day.month && d.day == day.day);
+    } else {
+      dates.add(day);
+    }
+    await saveCompletionDates(habitId, dates);
+  }
 }
