@@ -3,8 +3,12 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/data/habit_repository.dart';
 import '../../core/data/models/habit.dart';
+import '../../core/streak/streak_service.dart';
+import '../../core/data/models/badge.dart';
 import '../dashboard/heatmap_widget.dart';
+import 'package:get_it/get_it.dart';
 import 'dart:math';
+import '../habits/habit_item_widget.dart';
 
 /// Home screen shown when the user has completed onboarding.
 ///
@@ -19,15 +23,29 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   late Future<List<Habit>> _habitsFuture;
   final Map<String, Map<DateTime, int>> _completionData = {};
+  final Map<String, int> _currentStreaks = {};
+  final Map<String, int> _longestStreaks = {};
 
   @override
   void initState() {
     super.initState();
-    _habitsFuture = HabitRepository.loadHabits();
+    _habitsFuture = _loadAndCompute();
+  }
+
+  Future<List<Habit>> _loadAndCompute() async {
+    final habits = await HabitRepository.loadHabits();
+    final service = GetIt.I<StreakService>();
+    for (final habit in habits) {
+      final cs = await service.getCurrentStreak(habit.id);
+      final ls = await service.getLongestStreak(habit.id);
+      _currentStreaks[habit.id] = cs;
+      _longestStreaks[habit.id] = ls;
+    }
+    return habits;
   }
 
   Future<void> _refresh() async {
-    final habits = await HabitRepository.loadHabits();
+    final habits = await _loadAndCompute();
     setState(() {
       _habitsFuture = Future.value(habits);
     });
@@ -174,6 +192,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 final habit = habits[index];
                 final data =
                     _completionData.putIfAbsent(habit.id, _generateMockCompletion);
+
                 return Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   child: Column(
@@ -219,6 +238,17 @@ class _HomeScreenState extends State<HomeScreen> {
                       const Divider(color: Colors.white24),
                     ],
                   ),
+
+                final current = _currentStreaks[habit.id];
+                final longest = _longestStreaks[habit.id];
+                return HabitItemWidget(
+                  habit: habit,
+                  completionData: data,
+                  completedToday: _completedToday(habit.id),
+                  onToggle: (v) => _toggleToday(habit.id, v),
+                  currentStreak: current,
+                  longestStreak: longest,
+
                 );
               },
             ),
