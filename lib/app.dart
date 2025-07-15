@@ -12,11 +12,12 @@ import 'core/data/models/habit.dart';
 /// Root app widget
 class App extends StatelessWidget {
   final bool onboardingComplete;
-  const App({super.key, required this.onboardingComplete});
+  final GlobalKey<NavigatorState> navigatorKey;
+  const App({super.key, required this.onboardingComplete, required this.navigatorKey});
 
   @override
   Widget build(BuildContext context) {
-    final router = createRouter(onboardingComplete);
+    final router = createRouter(onboardingComplete, navigatorKey);
     final baseDark = ThemeData.dark();
     return MaterialApp.router(
       title: 'Habit Tracker',

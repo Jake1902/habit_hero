@@ -6,6 +6,7 @@ import 'app.dart';
 import 'core/data/completion_repository.dart';
 import 'core/streak/streak_service.dart';
 import 'core/services/di.dart';
+import 'core/services/notification_permission_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -13,7 +14,8 @@ Future<void> main() async {
   getIt.registerLazySingleton<CompletionRepository>(() => CompletionRepository());
   getIt.registerLazySingleton<StreakService>(
       () => StreakService(getIt<CompletionRepository>()));
-  registerServices(getIt);
+  final prefs = await SharedPreferences.getInstance();
+  registerServices(getIt, prefs);
 
   AwesomeNotifications().initialize(
     'resource://drawable/ic_launcher',
@@ -29,7 +31,11 @@ Future<void> main() async {
     ],
     debug: true,
   );
-  final prefs = await SharedPreferences.getInstance();
+  final navigatorKey = GlobalKey<NavigatorState>();
   final completed = prefs.getBool('onboarding_complete') ?? false;
-  runApp(App(onboardingComplete: completed));
+  final permSvc = getIt<NotificationPermissionService>();
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    permSvc.ensurePermissionRequested(navigatorKey.currentContext!);
+  });
+  runApp(App(onboardingComplete: completed, navigatorKey: navigatorKey));
 }

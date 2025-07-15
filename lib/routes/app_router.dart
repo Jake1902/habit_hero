@@ -1,16 +1,20 @@
 import 'package:go_router/go_router.dart';
+import 'package:flutter/material.dart';
 import '../features/onboarding/onboarding_screen.dart';
 import '../features/home/home_screen.dart';
 import '../features/habits/add_edit_habit_screen.dart';
 import '../features/habits/category_creation_screen.dart';
 import '../features/habits/streak_goal_screen.dart';
 import '../features/habits/reminder_screen.dart';
+import '../features/habits/reminder_setup_screen.dart';
+import '../features/calendar/calendar_edit_screen.dart';
 import '../features/archive/archive_screen.dart';
 import '../features/settings/settings_screen.dart';
 import '../core/data/models/habit.dart';
 
-GoRouter createRouter(bool onboardingComplete) {
+GoRouter createRouter(bool onboardingComplete, GlobalKey<NavigatorState> key) {
   return GoRouter(
+    navigatorKey: key,
     initialLocation: onboardingComplete ? '/home' : '/onboarding',
     routes: [
       GoRoute(
@@ -39,6 +43,29 @@ GoRouter createRouter(bool onboardingComplete) {
         path: '/reminder',
         builder: (context, state) =>
             ReminderScreen(current: state.extra as List<int>?),
+      ),
+      GoRoute(
+        path: '/calendar_edit',
+        name: 'calendar_edit',
+        builder: (_, state) {
+          final args = state.extra! as Map<String, dynamic>;
+          return CalendarEditScreen(
+            habitId: args['habitId'],
+            habitName: args['habitName'],
+            completionMap: args['completionMap'],
+          );
+        },
+      ),
+      GoRoute(
+        path: '/reminder_setup',
+        builder: (_, state) {
+          final extra = state.extra! as Map<String, dynamic>;
+          return ReminderSetupScreen(
+            initialTime: extra['initialTime'] as TimeOfDay?,
+            initialWeekdays:
+                List<int>.from(extra['initialWeekdays'] as List<dynamic>),
+          );
+        },
       ),
       GoRoute(
         path: '/archive',
