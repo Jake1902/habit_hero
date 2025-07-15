@@ -34,7 +34,13 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
 
     return Scaffold(
       backgroundColor: const Color(0xFF121212),
-      appBar: AppBar(title: const Text('Analytics')),
+      appBar: AppBar(
+        title: const Text('Analytics'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.pop(context),
+        ),
+      ),
       body: Column(
         children: [
           const SizedBox(height: 16),

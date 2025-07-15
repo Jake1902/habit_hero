@@ -44,7 +44,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             subtitle: const Text('Export or import your data',
                 style: TextStyle(color: Color(0xFFB0B0B0))),
             trailing: const Icon(Icons.chevron_right, color: Colors.white),
-            onTap: () => context.go('/backup_restore'),
+            onTap: () => context.push('/backup_restore'),
           ),
           const Divider(color: Color(0xFF2A2A2A)),
           ListTile(
