@@ -8,7 +8,7 @@ class HabitItemWidget extends StatelessWidget {
   const HabitItemWidget({
     super.key,
     required this.habit,
-    required this.completionData,
+    required this.completionMap,
     required this.completedToday,
     required this.onToggle,
     required this.onDayTapped,
@@ -21,8 +21,8 @@ class HabitItemWidget extends StatelessWidget {
   /// Habit being displayed.
   final Habit habit;
 
-  /// Map of completion dates used for the heatmap.
-  final Map<DateTime, int> completionData;
+  /// Map of completion counts per day used for the heatmap.
+  final Map<DateTime, int> completionMap;
 
   /// Whether the habit is completed today.
   final bool completedToday;
@@ -126,10 +126,10 @@ class HabitItemWidget extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           HabitHeatmap(
-            completionData: completionData,
+            completionMap: completionMap,
             icon: icon,
             name: habit.name,
-            tileColor: Color(habit.color),
+            fillColor: Color(habit.color),
             showHeader: false,
             onDayTapped: onDayTapped,
           ),
