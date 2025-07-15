@@ -84,6 +84,10 @@ class _ExportImportScreenState extends State<ExportImportScreen> {
       backgroundColor: const Color(0xFF121212),
       appBar: AppBar(
         title: const Text('Backup & Restore'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.pop(context),
+        ),
         backgroundColor: const Color(0xFF121212),
       ),
       body: Padding(
