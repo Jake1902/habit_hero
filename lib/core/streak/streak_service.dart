@@ -24,7 +24,7 @@ class StreakService {
     final map = await _repo.getCompletionMap(habit.id);
     if (map.isEmpty) return 0;
     var streak = 0;
-    var day = DateTime.now().toUtc();
+    var day = DateTime.now();
     while (true) {
       final key = _fmt.format(day);
       if (_isComplete(map, habit, key)) {
@@ -46,7 +46,7 @@ class StreakService {
     var current = 0;
     DateTime? prev;
     for (final key in keys) {
-      final date = _fmt.parseUtc(key);
+      final date = _fmt.parse(key);
       if (!_isComplete(map, habit, key)) {
         prev = null;
         current = 0;

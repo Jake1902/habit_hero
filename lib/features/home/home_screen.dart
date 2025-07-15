@@ -104,7 +104,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   int _todayCount(String id) {
-    final key = DateFormat('yyyy-MM-dd').format(DateTime.now().toUtc());
+    final key = DateFormat('yyyy-MM-dd').format(DateTime.now());
     final data = _completionData[id];
     if (data == null) return 0;
     return data[key] ?? 0;
