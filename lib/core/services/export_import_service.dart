@@ -31,8 +31,8 @@ class ExportImportService {
   }
 
   /// Export all habits and completions to a JSON file.
-  Future<File> exportToJson() async {
-    final dir = await _documentsDir();
+  Future<File> exportToJson([Directory? directory]) async {
+    final dir = directory ?? await _documentsDir();
     final habits = await HabitRepository.loadHabits();
     final completionData = <String, List<String>>{};
     for (final h in habits) {
@@ -48,8 +48,8 @@ class ExportImportService {
   }
 
   /// Export all habits and completions to a CSV file.
-  Future<File> exportToCsv() async {
-    final dir = await _documentsDir();
+  Future<File> exportToCsv([Directory? directory]) async {
+    final dir = directory ?? await _documentsDir();
     final habits = await HabitRepository.loadHabits();
     final rows = <List<dynamic>>[
       ['habitId', 'habitName', 'date', 'count'],
