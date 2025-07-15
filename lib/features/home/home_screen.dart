@@ -33,7 +33,7 @@ class HomeScreen extends StatelessWidget {
             ),
             children: [
               TextSpan(text: 'Habit', style: TextStyle(color: Colors.white)),
-              TextSpan(text: 'Kit', style: TextStyle(color: purple)),
+              TextSpan(text: 'Hero', style: TextStyle(color: purple)),
             ],
           ),
         ),
