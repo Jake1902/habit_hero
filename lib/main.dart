@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'features/home/home_screen.dart';
+import 'features/habits/add_edit_habit_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,6 +26,9 @@ class MyApp extends StatelessWidget {
       home: onboardingComplete
           ? const MyHomePage(title: 'Habit Hero')
           : const OnboardingScreen(),
+      routes: {
+        '/add_habit': (_) => const AddEditHabitScreen(),
+      },
     );
   }
 }
@@ -34,10 +39,9 @@ class MyHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text(title)),
-      body: const Center(child: Text('Main App Screen')),
-    );
+    // Reuse the home screen from the features folder so that the
+    // onboarding flow can push directly into the main app experience.
+    return const HomeScreen();
   }
 }
 
