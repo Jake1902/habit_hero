@@ -1,0 +1,11 @@
+{
+  "id": "tpl_pomodoro_study",
+  "name": "Pomodoro Study Session",
+  "description": "25-minute focused study blocks.",
+  "iconData": 0xe042,
+  "color": 0xFFFF7043,
+  "reminderTime": {"hour": 19, "minute": 0},
+  "reminderWeekdays": [1,2,3,4,5],
+  "completionTrackingType": "stepByStep",
+  "completionTarget": 4
+}
