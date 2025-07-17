@@ -9,16 +9,14 @@ class FeedbackTab extends StatefulWidget {
 }
 
 class _FeedbackTabState extends State<FeedbackTab> {
-  final _formKey       = GlobalKey<FormState>();
-  final _msgCtrl       = TextEditingController();
-  final _emailCtrl     = TextEditingController();
-  int?   _rating;
-  bool   _loading = false;
+  final _formKey = GlobalKey<FormState>();
+  final _msgCtrl = TextEditingController();
+  String? _type;
+  bool _loading = false;
 
   @override
   void dispose() {
     _msgCtrl.dispose();
-    _emailCtrl.dispose();
     super.dispose();
   }
 
@@ -28,15 +26,14 @@ class _FeedbackTabState extends State<FeedbackTab> {
     try {
       await AirtableService.submitFeedback(
         message: _msgCtrl.text.trim(),
-        email  : _emailCtrl.text.trim(),
-        rating : _rating,
+        type: _type!,
       );
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('🎉 Feedback sent!')),
         );
         _formKey.currentState!.reset();
-        _rating = null;
+        _type = null;
       }
     } catch (e) {
       if (mounted) {
@@ -76,28 +73,20 @@ class _FeedbackTabState extends State<FeedbackTab> {
                         : null,
               ),
               const SizedBox(height: 12),
-              TextFormField(
-                controller: _emailCtrl,
+              DropdownButtonFormField<String>(
+                value: _type,
                 decoration: const InputDecoration(
-                  labelText: 'Email (optional)',
+                  labelText: 'Type',
                   border: OutlineInputBorder(),
                 ),
-                keyboardType: TextInputType.emailAddress,
-              ),
-              const SizedBox(height: 12),
-              DropdownButtonFormField<int>(
-                value: _rating,
-                decoration: const InputDecoration(
-                  labelText: 'Rating (1\u20105, optional)',
-                  border: OutlineInputBorder(),
-                ),
-                items: [1,2,3,4,5]
+                items: const ['Feature', 'Bug']
                     .map((e) => DropdownMenuItem(
                           value: e,
-                          child: Text(e.toString()),
+                          child: Text(e),
                         ))
                     .toList(),
-                onChanged: (v) => setState(() => _rating = v),
+                onChanged: (v) => setState(() => _type = v),
+                validator: (v) => v == null ? 'Please select a type' : null,
               ),
               const SizedBox(height: 20),
               SizedBox(
