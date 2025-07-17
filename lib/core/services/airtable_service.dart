@@ -14,14 +14,14 @@ class AirtableService {
   /// Throws on non-200/201.
   static Future<void> submitFeedback({
     required String message,
-    String? email,
-    int? rating,
+    required String type,
+    String name = 'Anonymus',
   }) async {
     final body = jsonEncode({
       'fields': {
-        'message': message,
-        if (email  != null && email.isNotEmpty) 'email' : email,
-        if (rating != null) 'rating': rating,
+        'name'     : name,
+        'message'  : message,
+        'type'     : type,
         'createdAt': DateTime.now().toIso8601String(),
       }
     });
