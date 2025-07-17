@@ -4,6 +4,7 @@ import 'package:get_it/get_it.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'dart:io';
 import 'app.dart';
 import 'core/data/completion_repository.dart';
 import 'core/data/habit_repository.dart';
@@ -15,7 +16,12 @@ import 'core/services/settings_provider.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await dotenv.load(fileName: '.env');
+  final envFile = File('.env');
+  if (envFile.existsSync()) {
+    await dotenv.load(fileName: '.env');
+  } else {
+    await dotenv.load(fileName: '.env.example');
+  }
   final getIt = GetIt.instance;
   getIt.registerLazySingleton<HabitRepository>(() => HabitRepository());
   getIt.registerLazySingleton<CompletionRepository>(() => CompletionRepository());
