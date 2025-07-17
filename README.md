@@ -18,7 +18,8 @@ samples, guidance on mobile development, and a full API reference.
 ## Configuration
 
 Create a `.env` file in the project root with the Airtable credentials. An
-example is provided in `.env.example`.
+example is provided in `.env.example`. If `.env` does not exist, the
+application will automatically fall back to `.env.example`.
 
 ## Screenshot QA Checklist
 - [ ] Light mode
