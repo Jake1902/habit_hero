@@ -15,6 +15,11 @@ For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev/), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
 
+## Configuration
+
+Create a `.env` file in the project root with the Airtable credentials. An
+example is provided in `.env.example`.
+
 ## Screenshot QA Checklist
 - [ ] Light mode
 - [ ] Dark mode
